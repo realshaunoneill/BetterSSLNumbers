@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Home &bull; Scammer Numbers</title>
+
+    <meta name="author" content="Shaun O'Neill">
+    <meta name="description" content="Find every scammer number you'll ever need!">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Scammer Numbers">
+    <meta property="og:image" content="assets/avatar.png">
+    <meta property="og:description" content="Find every scammer number you'll ever need!">
+
+    <meta name="twitter:title" content="Shaun O'Neill">
+    <meta name="twitter:image" content="assets/avatar.png">
+    <meta name="twitter:description" content="I'm an 18 year old Irish software developer.">
+
+    <link rel="shortcut icon" type="image/png" href="assets/logo.png">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="/manifest.json">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://d1azc1qln24ryf.cloudfront.net/114779/Socicon/style-cf.css?cp0z2c">
+    <link rel="stylesheet" href="/css/font-mfizz.css">
+    <link rel="stylesheet" href="/css/bulma.css">
+    <link rel="stylesheet" href="/css/hero.css">
+
+    <script src="js/jquery-2.2.0.min.js"></script>
+    <script src="js/bulma.js"></script>
+</head>
+
+<body>
+
+<section class="hero is-large is-dark header-image">
+    <div class="hero-head">
+        <header class="nav">
+            <div class="container">
+                <div class="nav-left">
+                    <%- include partials/title.ejs %>
+                </div>
+
+                <div class="nav-center">
+                    <%- include partials/username.ejs %>
+                </div>
+
+                <span class="nav-toggle">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                </span>
+                <div class="nav-right nav-menu">
+                    <a class="nav-item is-active" href="/">
+                        Home
+                    </a>
+                    <a class="nav-item" href="/list">
+                        Numbers List
+                    </a>
+                    <a class="nav-item" href="/submit">
+                        Submit
+                    </a>
+                    <p class="nav-item control has-addons">
+                        <a class="button is-info is-outlines" href="/add">
+                            <span class="icon is-small">
+                                <i class="fa fa-plus"></i>
+                            </span>
+                            <span>Add Bot</span>
+                        </a>
+
+                        <%- include partials/login.ejs %>
+                    </p>
+                </div>
+            </div>
+        </header>
+    </div>
+
+    <div class="hero-body">
+        <div class="container has-text-centered">
+            <h1 class="title is-1">
+                <b>SSL Scammer Numbers</b>
+            </h1>
+            <h2 class="subtitle is-4">
+                <span>We're an awesome discord server with the aim to stop scammers!</span>
+            </h2>
+        </div>
+    </div>
+</section>
+
+</body>
+
+</html>

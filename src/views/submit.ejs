@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Submit &bull; Scammer Numbers</title>
+
+    <meta name="author" content="Shaun O'Neill">
+    <meta name="description" content="Find every scammer number you'll ever need!">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Scammer Numbers">
+    <meta property="og:image" content="assets/avatar.png">
+    <meta property="og:description" content="Find every scammer number you'll ever need!">
+
+    <meta name="twitter:title" content="Shaun O'Neill">
+    <meta name="twitter:image" content="assets/avatar.png">
+    <meta name="twitter:description" content="I'm an 18 year old Irish software developer.">
+
+    <link rel="shortcut icon" type="image/png" href="assets/logo.png">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="/manifest.json">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://d1azc1qln24ryf.cloudfront.net/114779/Socicon/style-cf.css?cp0z2c">
+    <link rel="stylesheet" href="/css/font-mfizz.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.1/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.13/css/intlTelInput.css">
+    <link rel="stylesheet" href="/css/hero.css">
+
+    <script src="js/jquery-2.2.0.min.js"></script>
+    <script src="js/bulma.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.13/js/intlTelInput.min.js"></script>
+</head>
+
+<body>
+
+<script>
+    var hostUrl = '<%= serverHost %>'
+</script>
+
+<section class="hero is-large is-dark header-image">
+    <div class="hero-head">
+        <header class="nav">
+            <div class="container">
+                <div class="nav-left">
+                    <%- include partials/title.ejs %>
+                </div>
+
+                <div class="nav-center">
+                    <%- include partials/username.ejs %>
+                </div>
+
+                <span class="nav-toggle">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                </span>
+                <div class="nav-right nav-menu">
+                    <a class="nav-item" href="/">
+                        Home
+                    </a>
+                    <a class="nav-item" href="/list">
+                        Numbers List
+                    </a>
+                    <a class="nav-item is-active" href="/submit">
+                        Submit
+                    </a>
+                    <p class="nav-item control has-addons">
+                        <a class="button is-info is-outlines" href="/add">
+                            <span class="icon is-small">
+                                <i class="fa fa-plus"></i>
+                            </span>
+                            <span>Add Bot</span>
+                        </a>
+
+                        <%- include partials/login.ejs %>
+                    </p>
+                </div>
+            </div>
+        </header>
+    </div>
+
+    <div class="hero-body">
+        <div class="container has-text-centered">
+            <h1 class="title is-1">
+                <b>SSL Scammer Numbers</b>
+            </h1>
+            <h2 class="subtitle is-4">
+                <span>We're an awesome discord server with the aim to stop scammers!</span>
+            </h2>
+        </div>
+    </div>
+</section>
+
+<section class="hero is-dark is-small is-bold">
+    <div class="hero-body">
+        <div class="heading">
+            <div class="has-text-centered">
+                <h1 class="title">
+                    <strong>~ Scammer Number Submission ~</strong>
+                </h1>
+                <h2 class="subtitle">&bull;&nbsp;Please make sure to provide numbers that you are 100% sure are scammers!&nbsp;&bull;</h2>
+            </div>
+
+            <small style="float: right; padding-right: 15px;"><i>~ Posting real tech support numbers will get your account banned!</i></small>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label">Username</label>
+            </div>
+            <div class="field-body">
+                <div class="field is-grouped">
+                    <p class="control is-expanded">
+                        <input class="input" value="<%= userRequest.username %>" disabled>
+                    </p>
+                </div>
+
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">User ID</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field is-grouped">
+                            <p class="control is-expanded">
+                                <input class="input" value="<%= userRequest.id %>" disabled>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+
+        <div class="field is-horizontal">
+            <div class="field-label">
+                <label class="label">Did you verify the number yourself?</label>
+            </div>
+            <div class="field-body">
+                <div class="field is-narrow">
+                    <div class="control">
+                        <label class="radio">
+                            <input id="yesVerifiedNumber" type="radio" name="member">
+                            Yes
+                        </label>
+                        <label class="radio">
+                            <input type="radio" name="member">
+                            No
+                        </label>
+                    </div>
+                    <p id="invalidChoiceMsg" class="help is-danger" style="display: none;">You need to verify the number yourself before you
+                        can submit it!
+                    </p>
+                </div>
+            </div>
+        </div>
+        <br>
+
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label">Scam Number</label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <input id="submitNumber" class="input" type="tel">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label">Scam Type</label>
+            </div>
+            <div class="field-body">
+                <div class="field is-narrow">
+                    <div class="control">
+                        <div class="select is-fullwidth">
+                            <select id="scamTypeSelect">
+                                <option>Business development</option>
+                                <option>Marketing</option>
+                                <option>Sales</option>
+                            </select>
+                        </div>
+                    </div>
+                    <p id="invalidScamTypeMsg" class="help is-danger" style="display: none;">You must specify the scam type!</p>
+                </div>
+            </div>
+        </div>
+        <br>
+
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label">Comment</label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <textarea id="submitComment" class="textarea"
+                                  placeholder="Please enter a comment about the scam number!"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+
+        <div class="field" style="float: right;">
+            <div class="control">
+                <button class="button is-primary" onclick="submitNumber()">
+                    Submit Number
+                </button>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<%- include partials/footer.ejs %>
+
+<script src="/js/submit.js"></script>
+<script>
+    $("#submitNumber").intlTelInput({
+        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.13/js/utils.js"
+    });
+</script>
+
+</body>
+
+<style>
+    .iti-flag {background-image: url("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.13/img/flags.png");}
+
+    @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2 / 1), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+        .iti-flag {background-image: url("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.13/img/flags@2x.png");}
+    }
+</style>
+
+</html>

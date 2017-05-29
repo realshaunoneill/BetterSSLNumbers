@@ -1,0 +1,15 @@
+<% if (!loggedInStatus) { %>
+<a class="button is-info is-outlines" href="/login" style="margin-left: 0px;">
+    <span class="icon is-small">
+        <i class="fa fa-sign-in"></i>
+    </span>
+    <span>Login</span>
+</a>
+<% } else { %>
+<a class="button is-info is-outlines" href="/logout" style="margin-left: 0px;">
+    <span class="icon is-small">
+        <i class="fa fa-sign-out"></i>
+    </span>
+    <span>Logout</span>
+</a>
+<% } %>

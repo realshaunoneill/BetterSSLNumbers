@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Error &bull; Logbot</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.1/css/bulma.min.css">
+    <link rel="stylesheet" href="css/banner.css">
+    <script src="https://use.fontawesome.com/337fb33ac6.js"></script>
+    <link rel="stylesheet" href="/css/serverMsg.css">
+    <link rel="stylesheet" href="/css/loading.css">
+    <link rel="stylesheet" href="/css/discord/icon-discord.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=201610241153">
+    <link rel="icon" type="image/png" href="/favicon-32x32.png?v=201610241153" sizes="32x32">
+    <link rel="icon" type="image/png" href="/favicon-16x16.png?v=201610241153" sizes="16x16">
+    <link rel="manifest" href="/manifest.json?v=201610241153">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg?v=201610241153" color="#468fcc">
+    <link rel="shortcut icon" href="/favicon.ico?v=201610241153">
+
+    <meta name="author" content="XeliteXirish">
+    <meta name="description" content="Open-Source dev team">
+
+    <meta name="apple-mobile-web-app-title" content="Logbot">
+    <meta name="application-name" content="Logbot">
+    <meta name="theme-color" content="#00c0fc">
+</head>
+
+<body>
+<script>
+    var isLoggedIn = "<%= loggedInStatus %>"
+</script>
+
+<section id="hero_section" class="hero is-danger is-medium error">
+    <div class="hero-head">
+        <nav class="nav has-shadow">
+            <div class="container">
+
+                <div class="nav-left">
+                    <%- include partials/title.ejs %>
+                </div>
+
+                <span class="nav-toggle">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                </span>
+
+                <div class="nav-center">
+                    <%- include partials/username.ejs %>
+                </div>
+
+                <div class="nav-right nav-menu">
+                    <a class="nav-item" href="/">
+                        Home
+                    </a>
+                    <a class="nav-item" href="/list">
+                        Numbers List
+                    </a>
+                    <a class="nav-item" href="/submit">
+                        Submit
+                    </a>
+                    <p class="nav-item control has-addons">
+                        <a class="button is-info is-outlines" href="/add">
+                            <span class="icon is-small">
+                                <i class="fa fa-plus"></i>
+                            </span>
+                            <span>Add Bot</span>
+                        </a>
+
+                        <%- include partials/login.ejs %>
+                    </p>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <div class="hero-body">
+        <div class="container has-text-centered">
+            <h1 class="title is-1">~ Error <%= error_code %> ~
+            </h1>
+            <br>
+            <h2 class="subtitle is-4">
+                Snap, something hit a snag. :/
+            </h2>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container box has-text-centered ">
+        <h5 class="subtitle is-5 paragraph">
+            <%= error_code %>, let's talk about that.
+        </h5>
+        <br>
+        <p class="paragraph">
+            <%= error_text %>
+        </p>
+    </div>
+</section>
+
+<%- include partials/footer.ejs %>
+
+</body>
