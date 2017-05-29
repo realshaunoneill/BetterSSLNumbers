@@ -20,6 +20,7 @@ let connection;
 const auth = exports.auth = require('./modules/auth');
 const submit = exports.submit = require('./modules/add');
 const web = exports.web = require('./modules/web');
+const bot = exports.bot = require('./modules/bot');
 
 let utils = require('./utils');
 
@@ -55,6 +56,7 @@ try {
     auth(config, app, passport, DiscordS);
     submit.init(app);
     web(app, config);
+    bot.connect();
 
     utils.createNumbersTable().catch(err => {console.err(err.stack)});
     utils.createUserTable().catch(err => {console.err(err.stack)});

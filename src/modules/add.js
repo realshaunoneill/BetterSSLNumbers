@@ -14,8 +14,8 @@ exports.init = function (app) {
 
     app.get('/api/submit', (req, res) => {
 
-        if (!req.isAuthenticated()) {
-            res.status(401).send('Session not authenticated!');
+        if (!req.isAuthenticated() || !utils.isUserInSSL(req.user.id)) {
+            res.status(401).send('Session not authenticated or you are not in SSL with a verified account!');
             return;
         }
 

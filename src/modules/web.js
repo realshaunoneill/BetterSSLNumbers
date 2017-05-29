@@ -22,7 +22,7 @@ module.exports = function (app, config) {
         }
     });
 
-    app.get('/list', checkAuth, (req, res) => {
+    app.get('/list', checkAuth, checkUserInSSL, (req, res) => {
         try {
             utils.getSavedNumbers().then(numberData => {
                 res.render('list', {
@@ -38,7 +38,7 @@ module.exports = function (app, config) {
         }
     });
 
-    app.get('/submit', checkAuth, (req, res) => {
+    app.get('/submit', checkAuth, checkUserInSSL, (req, res) => {
        try {
 
            res.render('submit', {
@@ -53,8 +53,8 @@ module.exports = function (app, config) {
     });
 
     app.get('/add', (req, res) => {
-        // Add bot TODO
-    })
+        res.redirect('https://discordapp.com/oauth2/authorize?client_id=318801505865957376&scope=bot&permissions=3072');
+    });
 
 
     //404 Error page (Must be the last route!)
@@ -77,7 +77,7 @@ module.exports = function (app, config) {
 function checkAuth(req, res, next) {
     try {
 
-        if (req.isAuthenticated() && checkInSSL(req, res)) return next();
+        if (req.isAuthenticated()) return next();
 
         req.session.redirect = req.path;
         res.status(403);
@@ -92,17 +92,21 @@ function checkAuth(req, res, next) {
     }
 }
 
-function checkInSSL(req, res) {
+function checkUserInSSL(req, res, next) {
     try {
 
-        if (req.isAuthenticated()){
-            //console.log(req.user);
-            return true;
-        }
-        return false;
+        if (utils.isUserInSSL(req.user.id)) return next();
 
-    }catch (err){
-        console.error(`Error occurred trying to check for SSL membership, Error: ${err.stack}`);
+        req.session.redirect = req.path;
+        res.status(403);
+        res.render('invalidGuilds', {
+
+            loggedInStatus: req.isAuthenticated(),
+            userRequest: req.user || false,
+        });
+
+    } catch (err) {
+        console.error(`An error has occurred trying to check if the user is in SSL, Error: ${err.stack}`);
         renderErrorPage(req, res, err);
     }
 }

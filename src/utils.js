@@ -1,4 +1,5 @@
 const index = require('./index');
+const bot = require('./modules/bot');
 
 /**
  * Returns all saved numbers that are confirmed
@@ -246,4 +247,16 @@ exports.fireWebhooks = function (numberData) {
  */
 exports.getDateString = function (date) {
     return date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+};
+
+/**
+ * Returns true if the user is in SSL
+ * @param userId
+ * @returns {boolean}
+ */
+exports.isUserInSSL = function (userId) {
+
+    let sslGuild = bot.client.guilds.get('194533269180514305');
+    if (!sslGuild) return false;
+    return sslGuild.members.exists('id', userId);
 };
