@@ -60,8 +60,6 @@ try {
     utils.createUserTable().catch(err => {console.err(err.stack)});
     utils.createBlacklistTable().catch(err => {console.err(err.stack)});
 
-    utils.submitNumber('XeliteXirish', '182210823630880768', '1234567890', 'Testing', '353').catch(err => {console.error(err.stack)});
-
 }catch (err){
     console.error(`An error occurred during module initialisation, Error: ${err.stack}`);
 }

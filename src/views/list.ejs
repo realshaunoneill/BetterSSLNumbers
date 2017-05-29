@@ -111,8 +111,8 @@
             <th>Submitter Username</th>
             <th>Date (D/M/Y H/M/S)</th>
             <th>Comment</th>
-            <th>Country : Code</th>
-            <th>Number</th>
+            <th>Country</th>
+            <th>Code : Number</th>
             <th>Working / Not Working</th>
         </tr>
         </thead>
@@ -126,8 +126,8 @@
             <td><b><%= numberData[x].SubmitAuthorName %></b></td>
             <td><%= numberData[x].Date %></td>
             <td><b><%= numberData[x].Comment %></b></td>
-            <td><%= numberData[x].Country %> : +<%= numberData[x].CountryCode %></td>
-            <td><b><%= numberData[x].Number %></b></td>
+            <td><%= numberData[x].Country %></td>
+            <td><b>+<%= numberData[x].CountryCode %> <%= numberData[x].Number %></b></td>
             <td><%= numberData[x].WorkingCount %> / <%= numberData[x].NotWorkingCount %></td>
         </tr>
 
