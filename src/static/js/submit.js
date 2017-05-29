@@ -13,7 +13,10 @@ function verifyItems() {
     var choiceThing = document.getElementById('invalidChoiceMsg');
 
     if (!scamType) document.getElementById('invalidScamTypeMsg').setAttribute('style', 'display: block;');
-    if (!number) document.getElementById('submitNumber').setAttribute('class', 'input is-danger');
+    if (!number) {
+        document.getElementById('submitNumber').setAttribute('class', 'input is-danger');
+        document.getElementById('invalidNumberMsg').setAttribute('style', 'display: block;');
+    }
     if (!comment) document.getElementById('submitComment').setAttribute('class', 'textarea is-danger');
 
     if (!yesRadio) {
@@ -22,18 +25,19 @@ function verifyItems() {
         choiceThing.setAttribute('style', 'display: none');
     }
 
-    if (!(!scamType || !number || !comment || !yesRadio)){
+    if (!(!scamType || !number || !comment || !yesRadio)) {
 
-        if (!checkValidNumber()){
+        if (!checkValidNumber()) {
             console.log(`Sorry that number appears to be invalid!`);
             document.getElementById('submitNumber').setAttribute('class', 'input is-danger');
+            document.getElementById('invalidNumberMsg').setAttribute('style', 'display: block;');
             return;
         }
 
         var countryInfo = fetchCountryInfo();
 
         submit(scamType, number, countryInfo.prefix, countryInfo.name, comment);
-    }else {
+    } else {
         console.log(`You need to fill in all the fields!`);
     }
 }
@@ -43,15 +47,12 @@ function checkValidNumber() {
 }
 
 function submit(scamType, number, country, countryName, comment) {
-    console.log(`${scamType} = ${number} + ${country} || ${comment}`);
 
     var submitXhr = new XMLHttpRequest();
     submitXhr.open('GET', `${hostUrl}${buildSubmitUrl(scamType, number, country, countryName, comment)}`);
     submitXhr.onreadystatechange = function () {
         if (this.readyState === 4 && this.status === 200) {
             submitSuccessfull();
-
-            console.log(this.responseText)
         }
     };
     submitXhr.send();
@@ -76,4 +77,10 @@ function fetchCountryInfo() {
 
 function submitSuccessfull() {
     console.log(`Successfully submit number!`);
+    document.getElementById('successNotification').setAttribute('style', 'display: block;');
+
+
+    document.getElementById('submitNumber').value = '';
+    document.getElementById('submitComment').value = '';
+    document.getElementById('yesVerifiedNumber').checked = false;
 }

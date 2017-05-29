@@ -105,16 +105,22 @@
                 <h1 class="title">
                     <strong>~ Scammer Number Submission ~</strong>
                 </h1>
-                <h2 class="subtitle">&bull;&nbsp;Please make sure to provide numbers that you are 100% sure are scammers!&nbsp;&bull;</h2>
+                <h2 class="subtitle">&bull;&nbsp;Please make sure to provide numbers that you are 100% sure are
+                    scammers!&nbsp;&bull;</h2>
             </div>
 
-            <small style="float: right; padding-right: 15px;"><i>~ Posting real tech support numbers will get your account banned!</i></small>
+            <small style="float: right; padding-right: 15px;"><i>~ Posting real tech support numbers will get your
+                    account banned!</i></small>
         </div>
     </div>
 </section>
 
 <section class="section">
     <div class="container">
+
+        <div id="successNotification" class="notification is-success has-text-centered" style="display: none;">
+            <b>~ You have successfully submit number into the scammer numbers database, thank you! ~</b>
+        </div>
 
         <div class="field is-horizontal">
             <div class="field-label is-normal">
@@ -159,7 +165,8 @@
                             No
                         </label>
                     </div>
-                    <p id="invalidChoiceMsg" class="help is-danger" style="display: none;">You need to verify the number yourself before you
+                    <p id="invalidChoiceMsg" class="help is-danger" style="display: none;">You need to verify the number
+                        yourself before you
                         can submit it!
                     </p>
                 </div>
@@ -176,6 +183,8 @@
                     <div class="control">
                         <input id="submitNumber" class="input" type="tel">
                     </div>
+                    <p id="invalidNumberMsg" class="help is-danger" style="display: none;">Sorry but that number appears
+                        to be invalid! Please check the format and try again!</p>
                 </div>
             </div>
         </div>
@@ -196,7 +205,8 @@
                             </select>
                         </div>
                     </div>
-                    <p id="invalidScamTypeMsg" class="help is-danger" style="display: none;">You must specify the scam type!</p>
+                    <p id="invalidScamTypeMsg" class="help is-danger" style="display: none;">You must specify the scam
+                        type!</p>
                 </div>
             </div>
         </div>
@@ -240,10 +250,14 @@
 </body>
 
 <style>
-    .iti-flag {background-image: url("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.13/img/flags.png");}
+    .iti-flag {
+        background-image: url("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.13/img/flags.png");
+    }
 
     @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2 / 1), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
-        .iti-flag {background-image: url("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.13/img/flags@2x.png");}
+        .iti-flag {
+            background-image: url("https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.13/img/flags@2x.png");
+        }
     }
 </style>
 
