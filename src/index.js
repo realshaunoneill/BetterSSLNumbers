@@ -61,6 +61,9 @@ try {
     utils.createNumbersTable().catch(err => {console.err(err.stack)});
     utils.createUserTable().catch(err => {console.err(err.stack)});
     utils.createBlacklistTable().catch(err => {console.err(err.stack)});
+    utils.createConfigTable().catch(err => {
+        console.err(err.stack)
+    });
 
 }catch (err){
     console.error(`An error occurred during module initialisation, Error: ${err.stack}`);

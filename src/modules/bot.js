@@ -14,6 +14,7 @@ client.on('ready', () => {
 
     client.user.setGame(index.config.host);
 
+    createGuildConfigs();
     loadCommands();
 });
 
@@ -23,7 +24,9 @@ client.on('message', msg => {
 
     if (msg.content.startsWith(config.prefix) && commands[command]) {
         try {
+
             commands[command].run(client, msg, args);
+
         } catch (err) {
             console.error(`Error while executing command, Error: ${err.stack}`);
         }
@@ -45,4 +48,23 @@ function loadCommands() {
         }
         commands[command.info.name] = command;
     });
+}
+
+function createGuildConfigs() {
+    client.guilds.array().forEach(guild => {
+        let checkQuery = `SELECT * FROM Config WHERE GuildId=${index.db.escape(guild.id)}`;
+        index.db.query(checkQuery, function (err, rows, fields) {
+            if (rows.length > 0) return;
+
+            let query = `INSERT INTO Config (GuildName, GuildId, EnableNotification) VALUES (${index.db.escape(guild.name)}, ${index.db.escape(guild.id)}, 0);`;
+            index.db.query(query, function (err, rows, fields) {
+                if (err) {
+                    console.error(`Error while creating guild config, Error: ${err.stack}`);
+                    console.error(`Error Query: ${query}`);
+                    return;
+                }
+                console.log(`Successfully created a config for ${guild.name}`);
+            })
+        })
+    })
 }

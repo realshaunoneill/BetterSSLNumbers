@@ -117,8 +117,12 @@
         <thead>
         <tr>
             <th></th>
+            <% if(isModerator){ %>
+            <th>ID</th>
+            <% } %>
             <th>Submitter Username</th>
             <th>Date (D/M/Y H/M/S)</th>
+            <th>Category</th>
             <th>Comment</th>
             <th>Country</th>
             <th>Code : Number</th>
@@ -132,8 +136,12 @@
 
         <tr>
             <td></td>
-            <td><b><%= numberData[x].SubmitAuthorName %></b></td>
+            <% if(isModerator){ %>
+            <td><%= numberData[x].ID %></td>
+            <% } %>
+            <td><b><%= numberData[x].SubmitAuthorName %> (<%= numberData[x].SubmitAuthorID %>)</b></td>
             <td><%= numberData[x].Date %></td>
+            <td><%= numberData[x].ScamType %></td>
             <td><b><%= numberData[x].Comment %></b></td>
             <td><%= numberData[x].Country %></td>
             <td><b>+<%= numberData[x].CountryCode %> <%= numberData[x].Number %></b></td>
@@ -153,7 +161,7 @@
     <% } %>
 </section>
 
-<%- include partials/footer.ejs%>
+<%- include partials/footer.ejs %>
 
 <style>
     td {

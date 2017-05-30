@@ -1,5 +1,6 @@
 const index = require('./index');
 const bot = require('./modules/bot');
+const RichEmbed = require('discord.js').RichEmbed;
 
 /**
  * Returns all saved numbers that are confirmed
@@ -8,7 +9,7 @@ const bot = require('./modules/bot');
 exports.getSavedNumbers = function () {
     return new Promise((resolve, reject) => {
 
-        let query = `SELECT * FROM SavedNumbers LIMIT ${index.config.hardLimit}`;
+        let query = `SELECT * FROM SavedNumbers WHERE Removed=0 LIMIT ${index.config.hardLimit}`;
         index.db.query(query, function (err, rows, fields) {
             if (err) {
                 console.error(`Unable to fetch saved numbers, Error: ${err.stack}`);
@@ -57,8 +58,12 @@ exports.submitNumber = function (username, userId, number, comment, countryCode,
 
                     resolve(true);
                 })
-            }).catch(err => {reject(err)});
-        }).catch(err => {reject(err)});
+            }).catch(err => {
+                reject(err)
+            });
+        }).catch(err => {
+            reject(err)
+        });
     });
 };
 
@@ -154,7 +159,9 @@ exports.createNumbersTable = function () {
     CountryCode TEXT,
     ScamType TEXT,
     WorkingCount VARCHAR(10) DEFAULT 0,
-    NotWorkingCount VARCHAR(10) DEFAULT 0
+    NotWorkingCount VARCHAR(10) DEFAULT 0,
+    Removed TINYINT(1) DEFAULT 0,
+    RemovedBy VARCHAR(30)
 );`;
 
         index.db.query(query, function (err, rows, fields) {
@@ -220,6 +227,28 @@ exports.createBlacklistTable = function () {
     });
 };
 
+exports.createConfigTable = function () {
+    return new Promise((resolve, reject) => {
+        let query = `CREATE TABLE IF NOT EXISTS ${index.config.sql_db}.Config
+(
+    ID INT PRIMARY KEY AUTO_INCREMENT,
+    GuildName TEXT,
+    GuildId VARCHAR(30),
+    NotificationChannelId VARCHAR(30),
+    EnableNotification TINYINT(1)
+);`;
+        index.db.query(query, function (err, rows, fields) {
+            if (err) {
+                console.error(`Unable to create config table, Error: ${err.stack}`);
+                console.error(`Error Query: ${query}`);
+                return reject(err);
+            }
+
+            resolve();
+        })
+    });
+};
+
 /**
  * Returns the phone code for a specific country
  * @returns string country code
@@ -227,17 +256,6 @@ exports.createBlacklistTable = function () {
  */
 exports.fetchCountry = function (countryCode) {
     if (countryCode === '353') return 'Ireland'
-};
-
-/**
- * Fires webhooks so all subscribe servers get notified
- * @param numberData
- * @returns {Promise}
- */
-exports.fireWebhooks = function (numberData) {
-    return new Promise((resolve, reject) => {
-
-    });
 };
 
 /**
@@ -259,4 +277,147 @@ exports.isUserInSSL = function (userId) {
     let sslGuild = bot.client.guilds.get('194533269180514305');
     if (!sslGuild) return false;
     return sslGuild.members.exists('id', userId);
+};
+
+/**
+ * Adds a specific number to the blacklist
+ * @param submitterUser
+ * @param number
+ * @returns {Promise}
+ */
+exports.addNumberToBlacklist = function (submitterUser, number) {
+    return new Promise((resolve, reject) => {
+
+        let checkQuery = `SELECT * FROM NumberBlacklist WHERE Number=${index.db.escape(number)}`;
+        index.db.query(checkQuery, function (err, rows, fields) {
+            if (err) reject(err);
+            if (rows.length > 0) return resolve(false);
+
+            let query = `INSERT INTO NumberBlacklist (SubmitterUsername, SubmitterId, Number) VALUES (${index.db.escape(submitterUser.tag)}, ${index.db.escape(submitterUser.id)}, ${index.db.escape(number)});`;
+            index.db.query(query, function (err, rows, fields) {
+                if (err) {
+                    console.error(`Unable to add number to blacklist, Error: ${err.stack}`);
+                    console.error(`Error Query: ${query}`);
+                    return reject(err);
+                }
+
+                resolve(true);
+            })
+        });
+    })
+};
+
+exports.removeScammerNumber = function (deleteUser, number) {
+    return new Promise((resolve, reject) => {
+
+        let query = `UPDATE SavedNumbers SET Removed=1, RemovedBy=${index.db.escape(deleteUser.id)} WHERE Number=${index.db.escape(numberID)}`;
+        index.db.query(query, function (err, rows, fields) {
+            if (err) {
+                console.error(`Unable to remove number, Error: ${err.stack}`);
+                console.error(`Error Query: ${query}`);
+                return reject(err);
+            }
+
+            resolve(true);
+        })
+    });
+};
+
+/**
+ * Returns a simple embed
+ * @param title
+ * @param text
+ * @param colour
+ * @param isBad (displays a warning picture)
+ * @returns {RichEmbed}
+ */
+exports.getSimpleEmbed = function (title, text, colour, isBad = false) {
+    let embedMsg = new RichEmbed()
+        .setTitle(title)
+        .setAuthor("Better SSL Numbers", bot.client.user.avatarURL)
+        .setColor(colour || exports.getRandomColor())
+        .setURL(index.config.host)
+        .setDescription(text);
+    if (isBad) embedMsg.setThumbnail("http://www.shaunoneill.com/assets/genericError.png");
+
+    return embedMsg;
+};
+
+/**
+ * Returns the hex code for common colours
+ * @param colourCode
+ * @returns {*}
+ */
+exports.getColour = function (colourCode) {
+    if (colourCode.toLowerCase() === 'red') {
+        return 0xCC0E0E;
+    }
+    else if (colourCode.toLowerCase() === 'blue') {
+        return 0x0988B3;
+    }
+    else if (colourCode.toLowerCase() === 'green') {
+        return 0x14E01D;
+    }
+    else if (colourCode.toLowerCase() === 'orange') {
+        return 0xFF8C00;
+    }
+    else if (colourCode.toLowerCase() === 'yellow') {
+        return 0xFFFF00;
+    } else {
+        return exports.getRandomColor();
+    }
+};
+
+exports.fetchNotificationChannel = function (guild) {
+    return new Promise((resolve, reject) => {
+        let query = `SELECT * FROM Config WHERE GuildId=${guild.id}`;
+        index.db.query(query, function (err, rows, fields) {
+            if (err) {
+                console.error(`Error fetching notification channel, Error: ${err.stack}`);
+                console.error(`Error Query: ${query}`);
+                return reject(err);
+            }
+
+            if (rows.length > 0) {
+                if (rows[0].EnableNotification === 1) {
+                    resolve(rows[0].NotificationChannelId);
+                } else {
+                    resolve(null);
+                }
+
+            } else resolve(null);
+        })
+    })
+};
+
+exports.notifyNewNumber = function (submitterUsername, number, comment, type) {
+    return new Promise((resolve, reject) => {
+
+        let guilds = index.bot.client.guilds.array();
+        guilds.forEach(guild => {
+            exports.fetchNotificationChannel(guild).then(channelId => {
+
+                if (channelId) {
+                    let channel = guild.channels.get(channelId);
+                    if (channel) {
+
+                        let embed = exports.getSimpleEmbed('Scammer Number!', 'A new scammer number has been submitted!', exports.getColour('blue'));
+                        embed.addField('Number', number, true);
+                        embed.addField('Category', type);
+                        embed.addField('Comment', comment.substring(0, 1024));
+                        embed.setFooter(`- Submitted by ${submitterUsername}`);
+
+                        channel.send({embed}).catch(err => {
+                            console.error(`Unable to post number in channel ${channel.name}`);
+                            reject(err)
+                        });
+                    }
+                }
+            })
+        })
+    })
+};
+
+exports.userHasPerms = function (userId) {
+    return index.config.moderatorList.indexOf(userId) > -1;
 };

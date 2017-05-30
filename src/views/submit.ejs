@@ -119,6 +119,7 @@
     <div class="container">
 
         <div id="successNotification" class="notification is-success has-text-centered" style="display: none;">
+            <button class="delete" onclick="hideSuccessfullInfo()"></button>
             <b>~ You have successfully submit number into the scammer numbers database, thank you! ~</b>
         </div>
 
@@ -176,7 +177,7 @@
 
         <div class="field is-horizontal">
             <div class="field-label is-normal">
-                <label class="label">Scam Number</label>
+                <label class="label">Scammer Number</label>
             </div>
             <div class="field-body">
                 <div class="field">
@@ -222,6 +223,7 @@
                         <textarea id="submitComment" class="textarea"
                                   placeholder="Please enter a comment about the scam number!"></textarea>
                     </div>
+                    <p class="help" style="float: right"><i>&bull;&nbsp;1024 character limit!</i></p>
                 </div>
             </div>
         </div>
@@ -229,6 +231,7 @@
 
         <div class="field" style="float: right;">
             <div class="control">
+                <button class="button" onclick="resetFields()">Reset</button>
                 <button class="button is-primary" onclick="submitNumber()">
                     Submit Number
                 </button>

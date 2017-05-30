@@ -79,8 +79,26 @@ function submitSuccessfull() {
     console.log(`Successfully submit number!`);
     document.getElementById('successNotification').setAttribute('style', 'display: block;');
 
+    resetFields();
+}
 
+function resetFields() {
     document.getElementById('submitNumber').value = '';
     document.getElementById('submitComment').value = '';
     document.getElementById('yesVerifiedNumber').checked = false;
+
+    hideErrorNotifications();
 }
+
+function hideSuccessfullInfo() {
+    document.getElementById('successNotification').setAttribute('style', 'display: none;');
+}
+
+function hideErrorNotifications() {
+    document.getElementById('invalidScamTypeMsg').setAttribute('style', 'display: none;');
+    document.getElementById('submitNumber').setAttribute('class', 'input');
+    document.getElementById('invalidNumberMsg').setAttribute('style', 'display: none;');
+    document.getElementById('submitComment').setAttribute('class', 'textarea');
+    document.getElementById('invalidChoiceMsg').setAttribute('style', 'display: none;');
+}
+

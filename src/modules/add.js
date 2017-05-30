@@ -22,7 +22,7 @@ exports.init = function (app) {
         try {
 
             let number = req.query.number;
-            let comment = req.query.comment;
+            let comment = req.query.comment.substring(0, 1024);
             let countryCode = req.query.countryCode;
             let countryName = req.query.countryName;
             let type = req.query.type;
@@ -34,8 +34,12 @@ exports.init = function (app) {
             if (number, comment, countryCode, countryName, type) {
 
                 utils.submitNumber(req.user.username, req.user.id, number, comment, countryCode, countryName, type).then((added) => {
-                    if (added) res.status(200).send('Successfully added number to the database!');
+                    if (added) {
+                        res.status(200).send('Successfully added number to the database!');
+                        utils.notifyNewNumber(req.user.username, number, comment, type);
+                    }
                     else res.send('Either the number already exists or it is a legit phone number!');
+
                 }).catch(err => {
                     console.error(`Unable to submit number, Error: ${err.stack}`);
                     res.status(505).send('Unable to submit number, please try again later or contact @XeliteXirish!');
