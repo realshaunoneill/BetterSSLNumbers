@@ -160,6 +160,8 @@ exports.createNumbersTable = function () {
     ScamType TEXT,
     WorkingCount VARCHAR(10) DEFAULT 0,
     NotWorkingCount VARCHAR(10) DEFAULT 0,
+    VotedUsers VARCHAR(50),
+    NotificationMessages VARCHAR(50),
     Removed TINYINT(1) DEFAULT 0,
     RemovedBy VARCHAR(30)
 );`;
@@ -390,6 +392,14 @@ exports.fetchNotificationChannel = function (guild) {
     })
 };
 
+/**
+ * Notifies all guilds that are subscribed to updates
+ * @param submitterUsername
+ * @param number
+ * @param comment
+ * @param type
+ * @returns {Promise}
+ */
 exports.notifyNewNumber = function (submitterUsername, number, comment, type) {
     return new Promise((resolve, reject) => {
 
@@ -429,36 +439,71 @@ exports.userHasPerms = function (userId) {
 
 /**
  * Submits a working/not working vote for a number
+ * @param userID
  * @param vote - either up/down
  * @param number
  * @returns {Promise}
  */
-exports.submitVote = function (number, vote) {
+exports.submitVote = function (userID, number, vote) {
     return new Promise((resolve, reject) => {
 
         if (vote !== 'up' && vote !== 'down') return resolve(false);
+        exports.hasUserVoted(number, userID).then(voted => {
+            if (voted) return resolve(false);
 
-        let currentVoteQuery = `SELECT WorkingCount, NotWorkingCount FROM SavedNumbers WHERE Number=${index.db.escape(number)}`;
-        index.db.query(currentVoteQuery, function (err, rows, fields) {
-            if (err) {
-                return reject(err)
-            }
-            let currentUp = Number(rows[0].WorkingCount);
-            let currentDown = Number(rows[0].NotWorkingCount);
-
-            if (vote === 'up') currentUp += 1;
-            else if (vote === 'down') currentDown -= 1;
-
-            let submitQuery = `UPDATE SavedNumbers SET WorkingCount=${index.db.escape(currentUp)}, NotWorkingCount=${index.db.escape(currentDown)} WHERE Number=${index.db.escape(number)}`;
-            index.db.query(submitQuery, function (err, rows, fields) {
+            let currentVoteQuery = `SELECT WorkingCount, NotWorkingCount, VotedUsers FROM SavedNumbers WHERE Number=${index.db.escape(number)}`;
+            index.db.query(currentVoteQuery, function (err, rows, fields) {
                 if (err) {
-                    console.error(`Error while updating number votes, Error: ${err.stack}`);
-                    console.error(`Error Query: ${submitQuery}`);
-                    return reject(err);
+                    return reject(err)
                 }
+                let currentUp = Number(rows[0].WorkingCount);
+                let currentDown = Number(rows[0].NotWorkingCount);
 
-                resolve(true);
-            })
+                let votersUpdate = rows[0].VotedUsers;
+                if (!votersUpdate) votersUpdate = `${userID},`;
+                else votersUpdate += `${userID},`;
+
+                if (vote === 'up') currentUp += 1;
+                else if (vote === 'down') currentDown -= 1;
+
+                let submitQuery = `UPDATE SavedNumbers SET WorkingCount=${index.db.escape(currentUp)}, NotWorkingCount=${index.db.escape(currentDown)}, VotedUsers=${index.db.escape(votersUpdate)} WHERE Number=${index.db.escape(number)}`;
+                index.db.query(submitQuery, function (err, rows, fields) {
+                    if (err) {
+                        console.error(`Error while updating number votes, Error: ${err.stack}`);
+                        console.error(`Error Query: ${submitQuery}`);
+                        return reject(err);
+                    }
+
+                    resolve(true);
+                })
+            });
+        }).catch(err => {
+            reject(err)
         });
     })
+};
+
+/**
+ * Checks to see if a user has already voted on a number
+ * @param number
+ * @param userID
+ * @returns {Promise}
+ */
+exports.hasUserVoted = function (number, userID) {
+    return new Promise((resolve, reject) => {
+
+        let query = `SELECT VotedUsers FROM SavedNumbers WHERE Number=${index.db.escape(number)}`;
+        index.db.query(query, function (err, rows, fields) {
+            if (err) {
+                console.error(`Error while checking if a user voted, Error: ${err.stack}`);
+                console.error(`Error Query: ${query}`);
+                return reject(err);
+            }
+
+            if (!rows[0].VotedUsers) return resolve(false);
+            let votedUsers = rows[0].VotedUsers.split(',');
+
+            resolve(votedUsers.indexOf(userID) > -1);
+        })
+    });
 };

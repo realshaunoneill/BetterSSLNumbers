@@ -87,14 +87,22 @@ exports.init = function (app) {
         if (vote !== 'up' && vote !== 'down') return res.send(`Please either vote up or down!`);
 
         if (vote === 'up') {
-            utils.submitVote(number, 'up').then(() => {
-                res.status(200).send(`Successfully submitted your vote for that number!`);
+            utils.submitVote(req.user.id, number, 'up').then((voted) => {
+                if (voted) {
+                    res.status(200).send(`Successfully submitted your vote for that number!`);
+                } else {
+                    res.send(`Sorry but we were unable to submit your vote, maybe you have already voted?`);
+                }
             }).catch(err => {
                 return res.status(500).send(`Unable to submit a vote for that number!`);
             })
         } else if (vote === 'down') {
-            utils.submitVote(number, 'down').then(() => {
-                res.status(200).send(`Successfully submitted your vote for that number!`);
+            utils.submitVote(req.user.id, number, 'down').then((voted) => {
+                if (voted) {
+                    res.status(200).send(`Successfully submitted your vote for that number!`);
+                } else {
+                    res.send(`Sorry but we were unable to submit your vote, maybe you have already voted?`);
+                }
             }).catch(err => {
                 return res.status(500).send(`Unable to submit a vote for that number!`);
             })

@@ -31,7 +31,8 @@ module.exports = function (app, config) {
                     loggedInStatus: req.isAuthenticated(),
                     userRequest: req.user || false,
                     numberData: numberData,
-                    isModerator: isModerator
+                    isModerator: isModerator,
+                    serverHost: config.host
                 })
             }).catch(err => {console.error(`Unable to render saved numbers, Error: ${err.stack}`); renderErrorPage(req, res, err)});
 

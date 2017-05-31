@@ -15,11 +15,11 @@
     <meta property="og:image" content="assets/avatar.png">
     <meta property="og:description" content="Find every scammer number you'll ever need!">
 
-    <meta name="twitter:title" content="Shaun O'Neill">
-    <meta name="twitter:image" content="assets/avatar.png">
-    <meta name="twitter:description" content="I'm an 18 year old Irish software developer.">
+    <meta name="twitter:title" content="Scammer Numbers">
+    <meta name="twitter:image" content="img/logo.png">
+    <meta name="twitter:description" content="Find every scammer number you'll ever need!">
 
-    <link rel="shortcut icon" type="image/png" href="assets/logo.png">
+    <link rel="shortcut icon" type="image/png" href="img/logo.png">
 
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
@@ -31,12 +31,17 @@
     <link rel="stylesheet" href="/css/font-mfizz.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.1/css/bulma.min.css">
     <link rel="stylesheet" href="/css/hero.css">
+    <link rel="stylesheet" href="/css/custom.css">
 
     <script src="js/jquery-2.2.0.min.js"></script>
     <script src="js/bulma.js"></script>
 </head>
 
 <body>
+
+<script>
+    var hostUrl = '<%= serverHost %>'
+</script>
 
 <section class="hero is-large is-dark header-image">
     <div class="hero-head">
@@ -112,6 +117,8 @@
     </div>
 </section>
 
+<div id="snackbar"></div>
+
 <section class="section">
     <table class="table is-stripped">
         <thead>
@@ -186,11 +193,17 @@
         </section>
 
         <footer class="modal-card-foot">
-            <button class="button is-success" onclick="numberWorked('<%= numberData[x].ID %>')">Worked for me!</button>
-            <button class="button is-danger" onclick="numberDidntWork('<%= numberData[x].ID %>')">Didn't work!</button>
+            <button class="button is-success"
+                    onclick="numberWorked('<%= numberData[x].ID %>', '<%= numberData[x].Number %>')">Worked for me!
+            </button>
+            <button class="button is-danger"
+                    onclick="numberDidntWork('<%= numberData[x].ID %>', '<%= numberData[x].Number %>')">Didn't work!
+            </button>
 
             <% if(isModerator){ %>
-            <button class="button is-info" onclick="removeNumber('<%= numberData[x].ID %>')">Remove Number</button>
+            <button class="button is-info"
+                    onclick="removeNumber('<%= numberData[x].ID %>', '<%= numberData[x].Number %>')">Remove Number
+            </button>
             <% } %>
         </footer>
     </div>
