@@ -307,10 +307,10 @@ exports.addNumberToBlacklist = function (submitterUser, number) {
     })
 };
 
-exports.removeScammerNumber = function (deleteUser, number) {
+exports.removeScammerNumber = function (deleteUserId, number) {
     return new Promise((resolve, reject) => {
 
-        let query = `UPDATE SavedNumbers SET Removed=1, RemovedBy=${index.db.escape(deleteUser.id)} WHERE Number=${index.db.escape(numberID)}`;
+        let query = `UPDATE SavedNumbers SET Removed=1, RemovedBy=${index.db.escape(deleteUserId)} WHERE Number=${index.db.escape(number)}`;
         index.db.query(query, function (err, rows, fields) {
             if (err) {
                 console.error(`Unable to remove number, Error: ${err.stack}`);
@@ -418,6 +418,47 @@ exports.notifyNewNumber = function (submitterUsername, number, comment, type) {
     })
 };
 
+/**
+ * Check if the user has moderator perms
+ * @param userId
+ * @returns {boolean}
+ */
 exports.userHasPerms = function (userId) {
     return index.config.moderatorList.indexOf(userId) > -1;
+};
+
+/**
+ * Submits a working/not working vote for a number
+ * @param vote - either up/down
+ * @param number
+ * @returns {Promise}
+ */
+exports.submitVote = function (number, vote) {
+    return new Promise((resolve, reject) => {
+
+        if (vote !== 'up' && vote !== 'down') return resolve(false);
+
+        let currentVoteQuery = `SELECT WorkingCount, NotWorkingCount FROM SavedNumbers WHERE Number=${index.db.escape(number)}`;
+        index.db.query(currentVoteQuery, function (err, rows, fields) {
+            if (err) {
+                return reject(err)
+            }
+            let currentUp = Number(rows[0].WorkingCount);
+            let currentDown = Number(rows[0].NotWorkingCount);
+
+            if (vote === 'up') currentUp += 1;
+            else if (vote === 'down') currentDown -= 1;
+
+            let submitQuery = `UPDATE SavedNumbers SET WorkingCount=${index.db.escape(currentUp)}, NotWorkingCount=${index.db.escape(currentDown)} WHERE Number=${index.db.escape(number)}`;
+            index.db.query(submitQuery, function (err, rows, fields) {
+                if (err) {
+                    console.error(`Error while updating number votes, Error: ${err.stack}`);
+                    console.error(`Error Query: ${submitQuery}`);
+                    return reject(err);
+                }
+
+                resolve(true);
+            })
+        });
+    })
 };

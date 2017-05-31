@@ -130,11 +130,11 @@
         </tr>
         </thead>
 
-        <tbody>
+        <tbody id="listTable">
 
         <% if (numberData) { for (let x = 0; x < numberData.length; x++) { %>
 
-        <tr>
+        <tr onclick="openMoreInfoBox('<%= numberData[x].ID %>')">
             <td></td>
             <% if(isModerator){ %>
             <td><%= numberData[x].ID %></td>
@@ -161,6 +161,43 @@
     <% } %>
 </section>
 
+<% if (numberData) { for (let x = 0; x < numberData.length; x++) { %>
+
+<div id="info_<%= numberData[x].ID %>" class="modal">
+    <div class="modal-background" onclick="closeMoreInfoBox('<%= numberData[x].ID %>')"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Number Info: <u><%= numberData[x].Number %></u></p>
+            <button class="delete" onclick="closeMoreInfoBox('<%= numberData[x].ID %>')"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="content">
+
+                <h2>&bull;&nbsp;Submitted by: <%= numberData[x].SubmitAuthorName %></h2>
+                <p>Date of submission: <b><%= numberData[x].Date %></b></p>
+
+                <h2>&bull;&nbsp;Scam Type</h2>
+                <p><%= numberData[x].ScamType %></p>
+
+                <h2>&bull;&nbsp;Comment</h2>
+                <p><%= numberData[x].Comment %></p>
+
+            </div>
+        </section>
+
+        <footer class="modal-card-foot">
+            <button class="button is-success" onclick="numberWorked('<%= numberData[x].ID %>')">Worked for me!</button>
+            <button class="button is-danger" onclick="numberDidntWork('<%= numberData[x].ID %>')">Didn't work!</button>
+
+            <% if(isModerator){ %>
+            <button class="button is-info" onclick="removeNumber('<%= numberData[x].ID %>')">Remove Number</button>
+            <% } %>
+        </footer>
+    </div>
+</div>
+
+<% } } %>
+
 <%- include partials/footer.ejs %>
 
 <style>
@@ -170,5 +207,7 @@
         overflow: hidden;
     }
 </style>
+
+<script src="/js/list.js"></script>
 </body>
 </html>

@@ -18,7 +18,7 @@ const app = exports.app = express();
 let connection;
 
 const auth = exports.auth = require('./modules/auth');
-const submit = exports.submit = require('./modules/add');
+const submit = exports.submit = require('./modules/api');
 const web = exports.web = require('./modules/web');
 const bot = exports.bot = require('./modules/bot');
 

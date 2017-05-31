@@ -14,7 +14,7 @@ exports.run = function (bot, msg, args) {
     if (args.length > 0) {
         let number = args[0];
 
-        utils.removeScammerNumber(msg.author, number).then((removed) => {
+        utils.removeScammerNumber(msg.author.id, number).then((removed) => {
             msg.reply(`Successfully removed number:${number} from the database!`).then(m => {
                 m.delete(10000)
             });

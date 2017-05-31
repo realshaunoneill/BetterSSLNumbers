@@ -53,6 +53,53 @@ exports.init = function (app) {
             res.status(505).send('Unable to submit number, please try again later or contact @XeliteXirish!');
         }
     });
+
+    app.get('/api/remove', (req, res) => {
+        if (!req.isAuthenticated() || !utils.isUserInSSL(req.user.id)) {
+            res.status(401).send('Session not authenticated or you are not in SSL with a verified account!');
+            return;
+        }
+
+        if (!utils.userHasPerms(req.user.id)) return res.status(401).send(`Sorry but you do not have permission to preform this action!`);
+
+        let number = req.query.number;
+        if (!number) return res.send(`You need to supply a number to remove!`);
+
+        utils.removeScammerNumber(req.user.id, number).then(deleted => {
+            return res.status(200).send(`Deleted the number successfully!`);
+        }).catch(err => {
+            return res.status(500).send(`Unable to delete that number!`);
+        })
+    });
+
+    app.get('/api/vote', (req, res) => {
+        if (!req.isAuthenticated() || !utils.isUserInSSL(req.user.id)) {
+            res.status(401).send('Session not authenticated or you are not in SSL with a verified account!');
+            return;
+        }
+
+        let vote = req.query.vote.toLowerCase();
+        let number = req.query.number;
+
+        if (!vote || !number) {
+            return res.send('Sorry you need to supply a vote and a number as parameters!')
+        }
+        if (vote !== 'up' && vote !== 'down') return res.send(`Please either vote up or down!`);
+
+        if (vote === 'up') {
+            utils.submitVote(number, 'up').then(() => {
+                res.status(200).send(`Successfully submitted your vote for that number!`);
+            }).catch(err => {
+                return res.status(500).send(`Unable to submit a vote for that number!`);
+            })
+        } else if (vote === 'down') {
+            utils.submitVote(number, 'down').then(() => {
+                res.status(200).send(`Successfully submitted your vote for that number!`);
+            }).catch(err => {
+                return res.status(500).send(`Unable to submit a vote for that number!`);
+            })
+        }
+    });
 };
 
 function isNumberS(number) {
