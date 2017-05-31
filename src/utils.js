@@ -45,10 +45,10 @@ exports.submitNumber = function (username, userId, number, comment, countryCode,
         exports.checkIfExists(number).then(exists => {
             if (exists) return resolve(false);
 
-            exports.checkIsLegitNumber(number).then(isLegit => {
+            exports.checkIsLegitNumber(`${countryCode}${number}`).then(isLegit => {
                 if (isLegit) return resolve(false);
 
-                let query = `INSERT INTO SavedNumbers (SubmitAuthorName, SubmitAuthorId, Date, Number, Comment, Country, CountryCode, ScamType) VALUES (${index.db.escape(username)}, ${userId}, ${index.db.escape(new Date())}, ${index.db.escape(number)}, ${index.db.escape(comment)}, ${index.db.escape(countryName)}, ${index.db.escape(countryCode)}, ${index.db.escape(type)});`;
+                let query = `INSERT INTO SavedNumbers (SubmitAuthorName, SubmitAuthorId, Date, Number, Comment, Country, CountryCode, ScamType, FullNumber) VALUES (${index.db.escape(username)}, ${userId}, ${index.db.escape(new Date())}, ${index.db.escape(number)}, ${index.db.escape(comment)}, ${index.db.escape(countryName)}, ${index.db.escape(countryCode)}, ${index.db.escape(type)}, ${index.db.escape(`${countryCode}${number}`)});`;
                 index.db.query(query, function (err, rows, fields) {
                     if (err) {
                         console.error(`Error submitting number, Error: ${err.stack}`);
@@ -309,6 +309,12 @@ exports.addNumberToBlacklist = function (submitterUser, number) {
     })
 };
 
+/**
+ * Removes a scammer number from the db
+ * @param deleteUserId
+ * @param number - With country code
+ * @returns {Promise}
+ */
 exports.removeScammerNumber = function (deleteUserId, number) {
     return new Promise((resolve, reject) => {
 
@@ -395,15 +401,19 @@ exports.fetchNotificationChannel = function (guild) {
 /**
  * Notifies all guilds that are subscribed to updates
  * @param submitterUsername
+ * @param countryCode
  * @param number
  * @param comment
  * @param type
+ * @param country
  * @returns {Promise}
  */
-exports.notifyNewNumber = function (submitterUsername, number, comment, type) {
+exports.notifyNewNumber = function (submitterUsername, countryCode, number, comment, type, country) {
     return new Promise((resolve, reject) => {
 
         let guilds = index.bot.client.guilds.array();
+        let notificationMsgIds = {};
+
         guilds.forEach(guild => {
             exports.fetchNotificationChannel(guild).then(channelId => {
 
@@ -411,18 +421,36 @@ exports.notifyNewNumber = function (submitterUsername, number, comment, type) {
                     let channel = guild.channels.get(channelId);
                     if (channel) {
 
-                        let embed = exports.getSimpleEmbed('Scammer Number!', 'A new scammer number has been submitted!', exports.getColour('blue'));
-                        embed.addField('Number', number, true);
-                        embed.addField('Category', type);
+                        let embed = exports.getSimpleEmbed('Scammer Numbers! - Submit your own numbers here!', 'A new scammer number has been submitted!', exports.getColour('blue'));
+                        embed.addField('Number', `+${countryCode} ${number}`, true);
+                        embed.addField('Category', type, true);
+                        embed.addField('Country', country, true);
                         embed.addField('Comment', comment.substring(0, 1024));
                         embed.setFooter(`- Submitted by ${submitterUsername}`);
 
-                        channel.send({embed}).catch(err => {
+                        channel.send({embed}).then(m => {
+                            notificationMsgIds[guild.id] = m.id;
+
+                        }).catch(err => {
                             console.error(`Unable to post number in channel ${channel.name}`);
-                            reject(err)
                         });
                     }
                 }
+
+                // checks to see if its last one TODO gota make sure this actually works
+                if (guilds.length === Object.keys(notificationMsgIds).length) {
+                    console.log(JSON.stringify(notificationMsgIds));
+                    let query = `UPDATE SavedNumbers SET NotificationMessages=${index.db.escape(JSON.stringify(notificationMsgIds))} WHERE Number=${index.db.escape(number)}`;
+                    index.db.query(query, function (err, rows, fields) {
+                        if (err) {
+                            console.error(`Error setting notification message ids, Error: ${err.stack}`);
+                            console.error(`Error Query: ${query}`);
+                            return reject(err);
+                        }
+
+                        resolve();
+                    })
+                } else console.log(`${guilds.length} -> ${Object.keys(notificationMsgIds).length}`)
             })
         })
     })
@@ -466,7 +494,7 @@ exports.submitVote = function (userID, number, vote) {
                 if (vote === 'up') currentUp += 1;
                 else if (vote === 'down') currentDown -= 1;
 
-                let submitQuery = `UPDATE SavedNumbers SET WorkingCount=${index.db.escape(currentUp)}, NotWorkingCount=${index.db.escape(currentDown)}, VotedUsers=${index.db.escape(votersUpdate)} WHERE Number=${index.db.escape(number)}`;
+                let submitQuery = `UPDATE SavedNumbers SET WorkingCount=${index.db.escape(currentUp)}, NotWorkingCount=${index.db.escape(currentDown)}, VotedUsers=${index.db.escape(votersUpdate)} WHERE FullNumber=${index.db.escape(number)}`;
                 index.db.query(submitQuery, function (err, rows, fields) {
                     if (err) {
                         console.error(`Error while updating number votes, Error: ${err.stack}`);

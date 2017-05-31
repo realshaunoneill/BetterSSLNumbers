@@ -194,15 +194,15 @@
 
         <footer class="modal-card-foot">
             <button class="button is-success"
-                    onclick="numberWorked('<%= numberData[x].ID %>', '<%= numberData[x].Number %>')">Worked for me!
+                    onclick="numberWorked('<%= numberData[x].ID %>', '<%= numberData[x].FullNumber %>')">Worked for me!
             </button>
             <button class="button is-danger"
-                    onclick="numberDidntWork('<%= numberData[x].ID %>', '<%= numberData[x].Number %>')">Didn't work!
+                    onclick="numberDidntWork('<%= numberData[x].ID %>', '<%= numberData[x].FullNumber %>')">Didn't work!
             </button>
 
             <% if(isModerator){ %>
             <button class="button is-info"
-                    onclick="removeNumber('<%= numberData[x].ID %>', '<%= numberData[x].Number %>')">Remove Number
+                    onclick="removeNumber('<%= numberData[x].ID %>', '<%= numberData[x].FullNumber %>')">Remove Number
             </button>
             <% } %>
         </footer>

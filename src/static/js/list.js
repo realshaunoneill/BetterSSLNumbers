@@ -71,12 +71,12 @@ function removeNumber(numberID, number) {
 function successfullVote(numberID) {
 
     closeMoreInfoBox(numberID);
-    showSnackbar('Your vote has been recorded successfully!');
+    showSnackbar('Your vote has been recorded successfully!<br>Updates will be visible after a refresh!');
 }
 
 function successfullRemove(numberID) {
     closeMoreInfoBox(numberID);
-    showSnackbar(`You have successfully removed the number with ID: ${numberID}`);
+    showSnackbar(`You have successfully removed the number with ID: ${numberID}<br>Updates will be visible after a refresh!`);
 }
 
 function showError() {

@@ -36,7 +36,7 @@ exports.init = function (app) {
                 utils.submitNumber(req.user.username, req.user.id, number, comment, countryCode, countryName, type).then((added) => {
                     if (added) {
                         res.status(200).send('Successfully added number to the database!');
-                        utils.notifyNewNumber(req.user.username, number, comment, type);
+                        utils.notifyNewNumber(req.user.username, countryCode, number, comment, type, countryName);
                     }
                     else res.send('Either the number already exists or it is a legit phone number!');
 
