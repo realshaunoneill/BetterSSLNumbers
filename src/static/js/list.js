@@ -75,16 +75,24 @@ function removeNumber(numberID, number) {
 function successfullVote(numberID) {
 
     closeMoreInfoBox(numberID);
-    showSnackbar('Your vote has been recorded successfully!<br>Updates will be visible after a refresh!');
+    showSnackbar('Your vote has been recorded successfully!');
+    refreshPage();
 }
 
 function successfullRemove(numberID) {
     closeMoreInfoBox(numberID);
-    showSnackbar(`You have successfully removed the number with ID: ${numberID}<br>Updates will be visible after a refresh!`);
+    showSnackbar(`You have successfully removed the number with ID: ${numberID}`);
+    refreshPage();
 }
 
 function showError() {
     showSnackbar("Sorry but your vote couldn't be recorded, maybe you have voted for this number before?")
+}
+
+function refreshPage() {
+    setTimeout(function () {
+        window.location.reload()
+    }, 6000)
 }
 
 function showSnackbar(text) {

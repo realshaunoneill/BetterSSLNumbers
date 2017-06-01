@@ -163,7 +163,8 @@ exports.createNumbersTable = function () {
     VotedUsers VARCHAR(50),
     NotificationMessages VARCHAR(50),
     Removed TINYINT(1) DEFAULT 0,
-    RemovedBy VARCHAR(30)
+    RemovedBy VARCHAR(30),
+    FreePhone TINYINT(1) DEFAULT 0
 );`;
 
         index.db.query(query, function (err, rows, fields) {

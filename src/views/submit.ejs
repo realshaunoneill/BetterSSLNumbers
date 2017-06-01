@@ -149,31 +149,6 @@
         <br>
 
         <div class="field is-horizontal">
-            <div class="field-label">
-                <label class="label">Did you verify the number yourself?</label>
-            </div>
-            <div class="field-body">
-                <div class="field is-narrow">
-                    <div class="control">
-                        <label class="radio">
-                            <input id="yesVerifiedNumber" type="radio" name="member">
-                            Yes
-                        </label>
-                        <label class="radio">
-                            <input type="radio" name="member">
-                            No
-                        </label>
-                    </div>
-                    <p id="invalidChoiceMsg" class="help is-danger" style="display: none;">You need to verify the number
-                        yourself before you
-                        can submit it!
-                    </p>
-                </div>
-            </div>
-        </div>
-        <br>
-
-        <div class="field is-horizontal">
             <div class="field-label is-normal">
                 <label class="label">Scammer Number</label>
             </div>
@@ -218,10 +193,34 @@
             <div class="field-body">
                 <div class="field">
                     <div class="control">
-                        <textarea id="submitComment" class="textarea"
+                        <textarea id="submitComment" class="textarea" maxlength="1024"
                                   placeholder="Please enter a comment about the scam number!"></textarea>
                     </div>
                     <p class="help" style="float: right"><i>&bull;&nbsp;1024 character limit!</i></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="field is-horizontal">
+            <div class="field-label">
+                <label class="label">Did you verify the number yourself?</label>
+            </div>
+            <div class="field-body">
+                <div class="field is-narrow">
+                    <div class="control">
+                        <label class="radio">
+                            <input id="yesVerifiedNumber" type="radio" name="member">
+                            Yes
+                        </label>
+                        <label class="radio">
+                            <input type="radio" name="member">
+                            No
+                        </label>
+                    </div>
+                    <p id="invalidChoiceMsg" class="help is-danger" style="display: none;">You need to verify the number
+                        yourself before you
+                        can submit it!
+                    </p>
                 </div>
             </div>
         </div>
