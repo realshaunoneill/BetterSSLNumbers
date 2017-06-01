@@ -17,14 +17,17 @@ function numberWorked(numberID, number) {
     var voteUpXhr = new XMLHttpRequest();
     voteUpXhr.open('GET', `${hostUrl}/api/vote?number=${number}&vote=up`);
     voteUpXhr.onreadystatechange = function () {
+        console.log(this.responseText);
+
         if (this.readyState === 4 && this.status === 200) {
-            if (this.responseText.startsWith('Successfully submitted your vote')) {
-                successfullVote(numberID);
-            } else {
-                closeMoreInfoBox(numberID);
-                showError();
-            }
-        } else showError();
+            console.log(this.responseText);
+
+            successfullVote(numberID);
+
+        } else {
+            closeMoreInfoBox(numberID);
+            showError();
+        }
     };
     voteUpXhr.send();
 
@@ -37,31 +40,32 @@ function numberDidntWork(numberID, number) {
     voteDownXhr.onreadystatechange = function () {
 
         if (this.readyState === 4 && this.status === 200) {
-            if (this.responseText.startsWith('Successfully submitted your vote')) {
-                successfullVote(numberID);
-            } else {
-                closeMoreInfoBox(numberID);
-                showError();
-            }
-        } else showError();
+            console.log(this.responseText);
+
+            successfullVote(numberID);
+
+        } else {
+            closeMoreInfoBox(numberID);
+            showError();
+        }
     };
     voteDownXhr.send();
 
-    console.log(`Submitting not working vote for number  ${number}`);
+    console.log(`Submitting not working vote for number ${number}`);
 }
 
 function removeNumber(numberID, number) {
     var removeNumberXhr = new XMLHttpRequest();
     removeNumberXhr.open('GET', `${hostUrl}/api/remove?number=${number}`);
     removeNumberXhr.onreadystatechange = function () {
+        console.log(this);
+
         if (this.readyState === 4 && this.status === 200) {
-            if (this.responseText.startsWith('Deleted the number successfully')) {
-                successfullRemove(numberID);
-            } else {
-                closeMoreInfoBox(numberID);
-                showError();
-            }
-        } else showError();
+            successfullRemove(numberID);
+        } else {
+            showSnackbar(`Sorry but that number was unable to be deleted.<br>Error: ${this.responseText}`);
+            closeMoreInfoBox(numberID);
+        }
     };
     removeNumberXhr.send();
 

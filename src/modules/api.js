@@ -35,22 +35,22 @@ exports.init = function (app) {
 
                 utils.submitNumber(req.user.username, req.user.id, number, comment, countryCode, countryName, type).then((added) => {
                     if (added) {
-                        res.status(200).send('Successfully added number to the database!');
+                        res.status(200).send(`Successfully added number ${number} to the database!`);
                         utils.notifyNewNumber(req.user.username, countryCode, number, comment, type, countryName);
                     }
-                    else res.send('Either the number already exists or it is a legit phone number!');
+                    else res.status(400).send(`Either the number ${number} already exists or it is a legit phone number!`);
 
                 }).catch(err => {
-                    console.error(`Unable to submit number, Error: ${err.stack}`);
-                    res.status(505).send('Unable to submit number, please try again later or contact @XeliteXirish!');
+                    console.error(`Unable to submit number ${number}, Error: ${err.stack}`);
+                    res.status(400).send(`Unable to submit number ${number}, please try again later or contact @XeliteXirish!`);
                 });
             } else {
-                res.send('Please supply a number, scam type, country name and county code!');
+                res.status(400).send('Please supply a number, scam type, country name and county code!');
             }
 
         } catch (err) {
             console.error(`Unable to submit number, Error: ${err.stack}`);
-            res.status(505).send('Unable to submit number, please try again later or contact @XeliteXirish!');
+            res.status(500).send('Unable to submit number, please try again later or contact @XeliteXirish!');
         }
     });
 
@@ -66,9 +66,14 @@ exports.init = function (app) {
         if (!number) return res.send(`You need to supply a number to remove!`);
 
         utils.removeScammerNumber(req.user.id, number).then(deleted => {
-            return res.status(200).send(`Deleted the number successfully!`);
+
+            if (deleted) {
+                return res.status(200).send(`Deleted the number ${number} successfully!`);
+            } else {
+                res.status(400).send(`Sorry but the number ${number} was unable to be deleted!`)
+            }
         }).catch(err => {
-            return res.status(500).send(`Unable to delete that number!`);
+            return res.status(500).send(`Unable to delete the number ${number}!, Error: ${err.stack}`);
         })
     });
 
@@ -89,22 +94,22 @@ exports.init = function (app) {
         if (vote === 'up') {
             utils.submitVote(req.user.id, number, 'up').then((voted) => {
                 if (voted) {
-                    res.status(200).send(`Successfully submitted your vote for that number!`);
+                    res.status(200).send(`Successfully submitted your vote for the number ${number}!`);
                 } else {
-                    res.send(`Sorry but we were unable to submit your vote, maybe you have already voted?`);
+                    res.status(400).send(`Sorry but we were unable to submit your vote, maybe you have already voted?`);
                 }
             }).catch(err => {
-                return res.status(500).send(`Unable to submit a vote for that number!`);
+                return res.status(500).send(`Unable to submit a vote for the number ${number}!, Error: ${err.stack}`);
             })
         } else if (vote === 'down') {
             utils.submitVote(req.user.id, number, 'down').then((voted) => {
                 if (voted) {
-                    res.status(200).send(`Successfully submitted your vote for that number!`);
+                    res.status(200).send(`Successfully submitted your vote for the number ${number}!`);
                 } else {
-                    res.send(`Sorry but we were unable to submit your vote, maybe you have already voted?`);
+                    res.status(400).send(`Sorry but we were unable to submit your vote, maybe you have already voted?`);
                 }
             }).catch(err => {
-                return res.status(500).send(`Unable to submit a vote for that number!`);
+                return res.status(500).send(`Unable to submit a vote for the number ${number}!, Error: ${err.stack}`);
             })
         }
     });

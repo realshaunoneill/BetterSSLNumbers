@@ -45,10 +45,10 @@ exports.submitNumber = function (username, userId, number, comment, countryCode,
         exports.checkIfExists(number).then(exists => {
             if (exists) return resolve(false);
 
-            exports.checkIsLegitNumber(`${countryCode}${number}`).then(isLegit => {
+            exports.checkIsLegitNumber(`${number}`).then(isLegit => {
                 if (isLegit) return resolve(false);
 
-                let query = `INSERT INTO SavedNumbers (SubmitAuthorName, SubmitAuthorId, Date, Number, Comment, Country, CountryCode, ScamType, FullNumber) VALUES (${index.db.escape(username)}, ${userId}, ${index.db.escape(new Date())}, ${index.db.escape(number)}, ${index.db.escape(comment)}, ${index.db.escape(countryName)}, ${index.db.escape(countryCode)}, ${index.db.escape(type)}, ${index.db.escape(`${countryCode}${number}`)});`;
+                let query = `INSERT INTO SavedNumbers (SubmitAuthorName, SubmitAuthorId, Date, Number, Comment, Country, CountryCode, ScamType) VALUES (${index.db.escape(username)}, ${userId}, ${index.db.escape(new Date())}, ${index.db.escape(number)}, ${index.db.escape(comment)}, ${index.db.escape(countryName)}, ${index.db.escape(countryCode)}, ${index.db.escape(type)});`;
                 index.db.query(query, function (err, rows, fields) {
                     if (err) {
                         console.error(`Error submitting number, Error: ${err.stack}`);
@@ -326,7 +326,46 @@ exports.removeScammerNumber = function (deleteUserId, number) {
                 return reject(err);
             }
 
-            resolve(true);
+            let notificationQuery = `SELECT NotificationMessages FROM SavedNumbers WHERE Number=${index.db.escape(number)}`;
+            index.db.query(notificationQuery, function (err, rows, fields) {
+                if (err) {
+                    console.error(`Unable to check notification message ids from number, Error: ${err.stack}`);
+                    console.error(`Error Query: ${notificationQuery}`);
+                    return reject(err);
+                }
+
+                try {
+                    let notificationIds = JSON.parse(rows[0].NotificationMessages);
+
+                    for (let key in notificationIds) {
+                        if (notificationIds.hasOwnProperty(key)) {
+                            let guild = index.bot.client.guilds.get(key);
+                            let messageId = notificationIds[key];
+
+                            if (guild) {
+                                let guildChannels = guild.channels.array();
+
+                                for (let x = 0; x < guildChannels.length; x++) {
+                                    guildChannels[x].fetchMessage(messageId).then(message => {
+
+                                        if (message) {
+
+                                            message.delete().catch(err => {
+                                                console.error(`Error deleting notification message, Error: ${err.stack}`)
+                                            });
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    }
+
+                    resolve(true);
+                } catch (err) {
+                    return reject(err);
+                }
+
+            });
         })
     });
 };
@@ -376,6 +415,14 @@ exports.getColour = function (colourCode) {
     }
 };
 
+/**
+ * Returns a random colour hex code
+ * @returns {[*,*,*]}
+ */
+exports.getRandomColor = function () {
+    return [Math.floor(Math.random() * 256), Math.floor(Math.random() * 256), Math.floor(Math.random() * 256)];
+};
+
 exports.fetchNotificationChannel = function (guild) {
     return new Promise((resolve, reject) => {
         let query = `SELECT * FROM Config WHERE GuildId=${guild.id}`;
@@ -408,34 +455,29 @@ exports.fetchNotificationChannel = function (guild) {
  * @param country
  * @returns {Promise}
  */
-exports.notifyNewNumber = function (submitterUsername, countryCode, number, comment, type, country) {
-    return new Promise((resolve, reject) => {
+exports.notifyNewNumber = async function (submitterUsername, countryCode, number, comment, type, country) {
+
+    try {
 
         let guilds = index.bot.client.guilds.array();
         let notificationMsgIds = {};
 
-        guilds.forEach(guild => {
-            exports.fetchNotificationChannel(guild).then(channelId => {
+        for (let x = 0; x < guilds.length; x++) {
+            let channelID = await exports.fetchNotificationChannel(guilds[x]);
+            if (!channelID) return;
+            let channel = guilds[x].channels.get(channelID);
 
-                if (channelId) {
-                    let channel = guild.channels.get(channelId);
-                    if (channel) {
+            if (channel) {
 
-                        let embed = exports.getSimpleEmbed('Scammer Numbers! - Submit your own numbers here!', 'A new scammer number has been submitted!', exports.getColour('blue'));
-                        embed.addField('Number', `+${countryCode} ${number}`, true);
-                        embed.addField('Category', type, true);
-                        embed.addField('Country', country, true);
-                        embed.addField('Comment', comment.substring(0, 1024));
-                        embed.setFooter(`- Submitted by ${submitterUsername}`);
+                let embed = exports.getSimpleEmbed('Scammer Numbers! - Submit your own numbers here!', 'A new scammer number has been submitted!', exports.getColour('blue'));
+                embed.addField('Number', `+${countryCode} ${number}`, true);
+                embed.addField('Category', type, true);
+                embed.addField('Country', country, true);
+                embed.addField('Comment', comment.substring(0, 1024));
+                embed.setFooter(`- Submitted by ${submitterUsername}`);
 
-                        channel.send({embed}).then(m => {
-                            notificationMsgIds[guild.id] = m.id;
-
-                        }).catch(err => {
-                            console.error(`Unable to post number in channel ${channel.name}`);
-                        });
-                    }
-                }
+                let notifyMessage = await channel.send({embed});
+                notificationMsgIds[guilds[x].id] = notifyMessage.id;
 
                 // checks to see if its last one TODO gota make sure this actually works
                 if (guilds.length === Object.keys(notificationMsgIds).length) {
@@ -445,15 +487,15 @@ exports.notifyNewNumber = function (submitterUsername, countryCode, number, comm
                         if (err) {
                             console.error(`Error setting notification message ids, Error: ${err.stack}`);
                             console.error(`Error Query: ${query}`);
-                            return reject(err);
-                        }
 
-                        resolve();
+                        }
                     })
                 } else console.log(`${guilds.length} -> ${Object.keys(notificationMsgIds).length}`)
-            })
-        })
-    })
+            }
+        }
+    } catch (err) {
+        console.error(`Error notifying new number, Error: ${err.stack}`);
+    }
 };
 
 /**
@@ -494,7 +536,7 @@ exports.submitVote = function (userID, number, vote) {
                 if (vote === 'up') currentUp += 1;
                 else if (vote === 'down') currentDown -= 1;
 
-                let submitQuery = `UPDATE SavedNumbers SET WorkingCount=${index.db.escape(currentUp)}, NotWorkingCount=${index.db.escape(currentDown)}, VotedUsers=${index.db.escape(votersUpdate)} WHERE FullNumber=${index.db.escape(number)}`;
+                let submitQuery = `UPDATE SavedNumbers SET WorkingCount=${index.db.escape(currentUp)}, NotWorkingCount=${index.db.escape(currentDown)}, VotedUsers=${index.db.escape(votersUpdate)} WHERE Number=${index.db.escape(number)}`;
                 index.db.query(submitQuery, function (err, rows, fields) {
                     if (err) {
                         console.error(`Error while updating number votes, Error: ${err.stack}`);

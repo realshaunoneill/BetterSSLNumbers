@@ -53,6 +53,8 @@ function submit(scamType, number, country, countryName, comment) {
     submitXhr.onreadystatechange = function () {
         if (this.readyState === 4 && this.status === 200) {
             submitSuccessfull();
+        } else {
+            showSnackbar('You were unable to submit that number, maybe it was already submitted or it was a legit number?');
         }
     };
     submitXhr.send();
@@ -100,5 +102,15 @@ function hideErrorNotifications() {
     document.getElementById('invalidNumberMsg').setAttribute('style', 'display: none;');
     document.getElementById('submitComment').setAttribute('class', 'textarea');
     document.getElementById('invalidChoiceMsg').setAttribute('style', 'display: none;');
+}
+
+function showSnackbar(text) {
+    var bar = document.getElementById("snackbar");
+    bar.innerHTML = text;
+    bar.className = "show";
+
+    setTimeout(function () {
+        bar.className = bar.className.replace("show", "");
+    }, 3000);
 }
 
