@@ -17,12 +17,15 @@ const getHelp = function (bot, command) {
 exports.run = function (bot, msg, args) {
     if (!args.length > 0) {
         const embed = utils.getSimpleEmbed("Help", "All available commands for BetterSSLNumbers", utils.getColour('red'));
+        embed.setFooter('This message will be deleted in 10 seconds!');
 
         for (const cmd in bot.commands) {
             embed.addField(getHelp(bot, bot.commands[cmd]).name, getHelp(bot, bot.commands[cmd]).value);
         }
 
-        msg.channel.send({embed});
+        msg.channel.send({embed}).then(m => {
+            m.delete(10000)
+        });
 
     } else {
         let command = bot.commands[args[0]];
