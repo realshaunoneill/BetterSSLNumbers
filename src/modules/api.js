@@ -67,21 +67,25 @@ exports.init = function (app) {
             return;
         }
 
-        if (!utils.userHasPerms(req.user.id)) return res.status(401).send(`Sorry but you do not have permission to preform this action!`);
+        utils.userHasPerms(req.user.id).then(isModerator => {
+            if (!isModerator) return res.status(401).send(`Sorry but you do not have permission to preform this action!`);
 
-        let number = req.query.number;
-        if (!number) return res.send(`You need to supply a number to remove!`);
+            let number = req.query.number;
+            if (!number) return res.send(`You need to supply a number to remove!`);
 
-        utils.removeScammerNumber(req.user.id, number).then(deleted => {
+            utils.removeScammerNumber(req.user.id, number).then(deleted => {
 
-            if (deleted) {
-                return res.status(200).send(`Deleted the number ${number} successfully!`);
-            } else {
-                res.status(400).send(`Sorry but the number ${number} was unable to be deleted!`)
-            }
+                if (deleted) {
+                    return res.status(200).send(`Deleted the number ${number} successfully!`);
+                } else {
+                    res.status(400).send(`Sorry but the number ${number} was unable to be deleted!`)
+                }
+            }).catch(err => {
+                return res.status(500).send(`Unable to delete the number ${number}!, Error: ${err.stack}`);
+            })
         }).catch(err => {
             return res.status(500).send(`Unable to delete the number ${number}!, Error: ${err.stack}`);
-        })
+        });
     });
 
     app.get('/api/vote', (req, res) => {

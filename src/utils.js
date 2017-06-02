@@ -196,6 +196,7 @@ exports.createUserTable = function () {
     Username TEXT,
     UserId VARCHAR(30),
     Email TEXT,
+    Moderator TINYINT(1) DEFAULT 0,
     Banned TINYINT(1) DEFAULT 0,
     BannedBy VARCHAR(30)
 );`;
@@ -509,10 +510,24 @@ exports.notifyNewNumber = async function (submitterUsername, countryCode, number
 /**
  * Check if the user has moderator perms
  * @param userId
- * @returns {boolean}
+ * @returns {Promise}
  */
 exports.userHasPerms = function (userId) {
-    return index.config.moderatorList.indexOf(userId) > -1;
+    return new Promise((resolve, reject) => {
+        let query = `SELECT Moderator FROM Users WHERE UserId=${index.db.escape(userId)}`;
+        index.db.query(query, function (err, rows, fields) {
+            if (err) {
+                console.error(`Error while checking if a user is a moderator, Error: ${err.stack}`);
+                console.error(`Error Query: ${query}`);
+                return reject(err);
+            }
+
+            let isModerator = false;
+            if (rows[0].Moderator === 1) isModerator = true;
+
+            resolve(isModerator);
+        })
+    });
 };
 
 /**
