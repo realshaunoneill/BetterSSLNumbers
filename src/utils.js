@@ -20,6 +20,10 @@ exports.getSavedNumbers = function () {
             let results = [];
             for (let x = 0; x < rows.length; x++) {
                 rows[x].Date = exports.getDateString(rows[x].Date);
+
+                if (rows[x].FreePhone === 0) rows[x].FreePhone = 'False';
+                else rows[x].FreePhone = 'True';
+
                 results.push(rows[x])
             }
 
@@ -37,9 +41,10 @@ exports.getSavedNumbers = function () {
  * @param countryCode
  * @param countryName
  * @param type
+ * @param freePhone
  * @returns {Promise}
  */
-exports.submitNumber = function (username, userId, number, comment, countryCode, countryName, type) {
+exports.submitNumber = function (username, userId, number, comment, countryCode, countryName, type, freePhone) {
     return new Promise((resolve, reject) => {
 
         exports.checkIfExists(number).then(exists => {
@@ -48,7 +53,7 @@ exports.submitNumber = function (username, userId, number, comment, countryCode,
             exports.checkIsLegitNumber(`${number}`).then(isLegit => {
                 if (isLegit) return resolve(false);
 
-                let query = `INSERT INTO SavedNumbers (SubmitAuthorName, SubmitAuthorId, Date, Number, Comment, Country, CountryCode, ScamType) VALUES (${index.db.escape(username)}, ${userId}, ${index.db.escape(new Date())}, ${index.db.escape(number)}, ${index.db.escape(comment)}, ${index.db.escape(countryName)}, ${index.db.escape(countryCode)}, ${index.db.escape(type)});`;
+                let query = `INSERT INTO SavedNumbers (SubmitAuthorName, SubmitAuthorId, Date, Number, Comment, Country, CountryCode, ScamType, FreePhone) VALUES (${index.db.escape(username)}, ${userId}, ${index.db.escape(new Date())}, ${index.db.escape(number)}, ${index.db.escape(comment)}, ${index.db.escape(countryName)}, ${index.db.escape(countryCode)}, ${index.db.escape(type)}, ${index.db.escape(freePhone)});`;
                 index.db.query(query, function (err, rows, fields) {
                     if (err) {
                         console.error(`Error submitting number, Error: ${err.stack}`);
@@ -190,7 +195,9 @@ exports.createUserTable = function () {
     ID INT PRIMARY KEY AUTO_INCREMENT,
     Username TEXT,
     UserId VARCHAR(30),
-    Email TEXT
+    Email TEXT,
+    Banned TINYINT(1) DEFAULT 0,
+    BannedBy VARCHAR(30)
 );`;
 
         index.db.query(query, function (err, rows, fields) {
@@ -576,5 +583,57 @@ exports.hasUserVoted = function (number, userID) {
 
             resolve(votedUsers.indexOf(userID) > -1);
         })
+    });
+};
+
+/**
+ * Returns true if a user is banned from posting numbers
+ * @param userId
+ * @returns {Promise}
+ */
+exports.isUserBanned = function (userId) {
+    return new Promise((resolve, reject) => {
+
+        let query = `SELECT Banned FROM Users WHERE UserId=${index.db.escape(userId)}`;
+        index.db.query(query, function (err, rows, fields) {
+            if (err) {
+                console.error(`Error while checking if a user is banned, Error: ${err.stack}`);
+                console.error(`Error Query: ${query}`);
+                return reject(err);
+            }
+
+            let isBanned = false;
+            if (rows[0].Banned === 1) isBanned = true;
+
+            resolve(isBanned);
+        })
+    });
+};
+
+/**
+ * Bans a user from posting numbers
+ * @param banAuthorId
+ * @param userId
+ * @returns {Promise}
+ */
+exports.banUser = function (banAuthorId, userId) {
+    return new Promise((resolve, reject) => {
+
+        let checkQuery = `SELECT Username FROM Users WHERE UserId=${index.db.escape(userId)}`;
+        index.db.query(checkQuery, function (err, rows, fields) {
+            if (err) return reject(err);
+            if (!rows.length > 0) return resolve(false);
+
+            let query = `UPDATE Users SET Banned=1, BannedBy=${index.db.escape(banAuthorId)} WHERE UserId=${index.db.escape(userId)}`;
+            index.db.query(query, function (err, rows, fields) {
+                if (err) {
+                    console.error(`Error while checking if a user is banned, Error: ${err.stack}`);
+                    console.error(`Error Query: ${query}`);
+                    return reject(err);
+                }
+
+                resolve(true);
+            })
+        });
     });
 };

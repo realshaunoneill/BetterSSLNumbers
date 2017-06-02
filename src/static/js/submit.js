@@ -8,6 +8,7 @@ function verifyItems() {
     var scamType = document.getElementById('scamTypeSelect').value;
     var number = document.getElementById('submitNumber').value;
     var comment = document.getElementById('submitComment').value;
+    var freePhone = document.getElementById('freePhoneBox').checked;
 
     var yesRadio = document.getElementById('yesVerifiedNumber').checked;
     var choiceThing = document.getElementById('invalidChoiceMsg');
@@ -36,7 +37,7 @@ function verifyItems() {
 
         var countryInfo = fetchCountryInfo();
 
-        submit(scamType, number, countryInfo.prefix, countryInfo.name, comment);
+        submit(scamType, number, countryInfo.prefix, countryInfo.name, comment, freePhone);
     } else {
         console.log(`You need to fill in all the fields!`);
     }
@@ -46,10 +47,10 @@ function checkValidNumber() {
     return $("#submitNumber").intlTelInput("isValidNumber");
 }
 
-function submit(scamType, number, country, countryName, comment) {
+function submit(scamType, number, country, countryName, comment, freePhone) {
 
     var submitXhr = new XMLHttpRequest();
-    submitXhr.open('GET', `${hostUrl}${buildSubmitUrl(scamType, number, country, countryName, comment)}`);
+    submitXhr.open('GET', `${hostUrl}${buildSubmitUrl(scamType, number, country, countryName, comment, freePhone)}`);
     submitXhr.onreadystatechange = function () {
         if (this.readyState === 4 && this.status === 200) {
             submitSuccessfull();
@@ -60,7 +61,7 @@ function submit(scamType, number, country, countryName, comment) {
     submitXhr.send();
 }
 
-function buildSubmitUrl(scamType, number, country, countryName, comment) {
+function buildSubmitUrl(scamType, number, country, countryName, comment, freePhone) {
     let url = '/api/submit?';
 
     url += `type=${scamType}`;
@@ -68,6 +69,7 @@ function buildSubmitUrl(scamType, number, country, countryName, comment) {
     url += `&countryCode=${country}`;
     url += `&countryName=${countryName}`;
     url += `&comment=${comment}`;
+    url += `&free=${freePhone}`;
 
     return url;
 }

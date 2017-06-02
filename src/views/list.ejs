@@ -130,6 +130,7 @@
             <th>Submitter Username</th>
             <th>Date (D/M/Y H/M/S)</th>
             <th>Category</th>
+            <th>Free Phone</th>
             <th>Comment</th>
             <th>Country</th>
             <th>Code : Number</th>
@@ -146,9 +147,10 @@
             <% if(isModerator){ %>
             <td><%= numberData[x].ID %></td>
             <% } %>
-            <td><b><%= numberData[x].SubmitAuthorName %> (<%= numberData[x].SubmitAuthorID %>)</b></td>
+            <td><b><%= numberData[x].SubmitAuthorName %></b></td>
             <td><%= numberData[x].Date %></td>
             <td><%= numberData[x].ScamType %></td>
+            <td><%= numberData[x].FreePhone %></td>
             <td><b><%= numberData[x].Comment %></b></td>
             <td><%= numberData[x].Country %></td>
             <td><b>+<%= numberData[x].CountryCode %> <%= numberData[x].Number %></b></td>
@@ -180,14 +182,17 @@
         <section class="modal-card-body">
             <div class="content">
 
-                <h2>&bull;&nbsp;Submitted by: <%= numberData[x].SubmitAuthorName %></h2>
-                <p>Date of submission: <b><%= numberData[x].Date %></b></p>
+                <h2>&bull;&nbsp;<b>Submitted by: <%= numberData[x].SubmitAuthorName %></b></h2>
+                <p>-Date of submission: <b><%= numberData[x].Date %></b></p>
 
-                <h2>&bull;&nbsp;Scam Type</h2>
-                <p><%= numberData[x].ScamType %></p>
+                <h2>&bull;&nbsp;<b>Scam Type</b></h2>
+                <p>-<%= numberData[x].ScamType %></p>
 
-                <h2>&bull;&nbsp;Comment</h2>
-                <p><%= numberData[x].Comment %></p>
+                <h2>&bull;&nbsp;<b>Free Phone: </b></h2>
+                <p>-<%= numberData[x].FreePhone %></p>
+
+                <h2>&bull;&nbsp;<b>Comment</b></h2>
+                <p>-<%= numberData[x].Comment %></p>
 
             </div>
         </section>

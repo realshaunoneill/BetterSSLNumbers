@@ -26,26 +26,33 @@ exports.init = function (app) {
             let countryCode = req.query.countryCode;
             let countryName = req.query.countryName;
             let type = req.query.type;
+            let freePhone = req.query.free;
 
             if (!isNumberS(number)) return res.send('Please supply a valid number!');
 
             if (!comment) comment = 'No comment supplied';
 
-            if (number, comment, countryCode, countryName, type) {
+            if (number, comment, countryCode, countryName, type, freePhone) {
 
-                utils.submitNumber(req.user.username, req.user.id, number, comment, countryCode, countryName, type).then((added) => {
-                    if (added) {
-                        res.status(200).send(`Successfully added number ${number} to the database!`);
-                        utils.notifyNewNumber(req.user.username, countryCode, number, comment, type, countryName);
-                    }
-                    else res.status(400).send(`Either the number ${number} already exists or it is a legit phone number!`);
+                utils.isUserBanned(req.user.id).then(isBanned => {
+                    if (isBanned) return res.status(401).send(`Sorry but you have been banned from posting numbers! Contact @XeliteXirish if you feel this was a mistake!`);
 
-                }).catch(err => {
-                    console.error(`Unable to submit number ${number}, Error: ${err.stack}`);
-                    res.status(400).send(`Unable to submit number ${number}, please try again later or contact @XeliteXirish!`);
+                    utils.submitNumber(req.user.username, req.user.id, number, comment, countryCode, countryName, type, freePhone).then((added) => {
+                        if (added) {
+                            res.status(200).send(`Successfully added number ${number} to the database!`);
+                            utils.notifyNewNumber(req.user.username, countryCode, number, comment, type, countryName).catch(err => {
+                                console.error(`Error notifying new number, Error: ${err.stack}`)
+                            });
+                        }
+                        else res.status(400).send(`Either the number ${number} already exists or it is a legit phone number!`);
+
+                    }).catch(err => {
+                        console.error(`Unable to submit number ${number}, Error: ${err.stack}`);
+                        res.status(400).send(`Unable to submit number ${number}, please try again later or contact @XeliteXirish!`);
+                    });
                 });
             } else {
-                res.status(400).send('Please supply a number, scam type, country name and county code!');
+                res.status(400).send('Please supply a number, scam type, if it was a free phone number and country name and county code!');
             }
 
         } catch (err) {
