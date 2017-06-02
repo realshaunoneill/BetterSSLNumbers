@@ -1,0 +1,17 @@
+{
+  "server_ip": "",
+  "server_port": "",
+  "version": 0.1,
+  "botToken": "",
+  "prefix": "/num ",
+  "host": "",
+  "sql_host": "",
+  "sql_user": "",
+  "sql_db": "",
+  "sql_pass": "",
+  "clientID": "",
+  "clientSecret": "",
+  "session_secret": "",
+  "entriesPerPage": 150,
+  "hardLimit": 10000
+}
