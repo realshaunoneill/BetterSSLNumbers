@@ -55,7 +55,7 @@ function submit(scamType, number, country, countryName, comment, freePhone) {
         if (this.readyState === 4 && this.status === 200) {
             submitSuccessfull();
         } else if (this.readyState === 4 && this.status === 500) {
-            showSnackbar('You were unable to submit that number, maybe it was already submitted or it was a legit number?');
+            showSnackbar(`You were unable to submit that number.<br>Error: ${this.responseText}`);
         }
     };
     submitXhr.send();
