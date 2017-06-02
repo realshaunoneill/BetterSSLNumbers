@@ -115,4 +115,3 @@ function showSnackbar(text) {
         bar.className = bar.className.replace("show", "");
     }, 3000);
 }
-

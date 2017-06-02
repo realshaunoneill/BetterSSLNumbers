@@ -25,14 +25,15 @@ module.exports = function (app, config) {
     app.get('/list', checkAuth, checkUserInSSL, (req, res) => {
         try {
             utils.getSavedNumbers().then(numberData => {
-                let isModerator = config.moderatorList.indexOf(req.user.id) > -1;
-                res.render('list', {
+                utils.userHasPerms(req.user.id).then(isModerator => {
+                    res.render('list', {
 
-                    loggedInStatus: req.isAuthenticated(),
-                    userRequest: req.user || false,
-                    numberData: numberData,
-                    isModerator: isModerator,
-                    serverHost: config.host
+                        loggedInStatus: req.isAuthenticated(),
+                        userRequest: req.user || false,
+                        numberData: numberData,
+                        isModerator: isModerator,
+                        serverHost: config.host
+                    })
                 })
             }).catch(err => {console.error(`Unable to render saved numbers, Error: ${err.stack}`); renderErrorPage(req, res, err)});
 
