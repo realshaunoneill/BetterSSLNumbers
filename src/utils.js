@@ -343,7 +343,7 @@ exports.removeScammerNumber = function (deleteUserId, number) {
                     return reject(err);
                 }
 
-                try {
+                /*try {
                     let notificationIds = JSON.parse(rows[0].NotificationMessages);
 
                     for (let key in notificationIds) {
@@ -371,8 +371,8 @@ exports.removeScammerNumber = function (deleteUserId, number) {
 
                     resolve(true);
                 } catch (err) {
-                    return reject(err);
-                }
+                 return console.error(`Error deleting messages, Error: ${err.message}`);
+                 }*/
 
             });
         })
