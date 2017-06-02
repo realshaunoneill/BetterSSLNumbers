@@ -24,7 +24,7 @@ function numberWorked(numberID, number) {
 
             successfullVote(numberID);
 
-        } else {
+        } else if (this.readyState === 4 && this.status === 500) {
             closeMoreInfoBox(numberID);
             showError();
         }
@@ -44,7 +44,7 @@ function numberDidntWork(numberID, number) {
 
             successfullVote(numberID);
 
-        } else {
+        } else if (this.readyState === 4 && this.status === 500) {
             closeMoreInfoBox(numberID);
             showError();
         }
@@ -62,7 +62,7 @@ function removeNumber(numberID, number) {
 
         if (this.readyState === 4 && this.status === 200) {
             successfullRemove(numberID);
-        } else {
+        } else if (this.readyState === 4 && this.status === 500) {
             showSnackbar(`Sorry but that number was unable to be deleted.<br>Error: ${this.responseText}`);
             closeMoreInfoBox(numberID);
         }
