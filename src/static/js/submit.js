@@ -28,12 +28,12 @@ function verifyItems() {
 
     if (!(!scamType || !number || !comment || !yesRadio)) {
 
-        if (!checkValidNumber()) {
+        /*if (!checkValidNumber()) {
             console.log(`Sorry that number appears to be invalid!`);
             document.getElementById('submitNumber').setAttribute('class', 'input is-danger');
             document.getElementById('invalidNumberMsg').setAttribute('style', 'display: block;');
             return;
-        }
+         }*/
 
         var countryInfo = fetchCountryInfo();
 
