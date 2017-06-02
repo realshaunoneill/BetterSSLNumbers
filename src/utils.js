@@ -522,6 +522,8 @@ exports.userHasPerms = function (userId) {
                 return reject(err);
             }
 
+            if (!rows[0]) return resolve(false);
+
             let isModerator = false;
             if (rows[0].Moderator === 1) isModerator = true;
 
