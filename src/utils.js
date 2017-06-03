@@ -53,7 +53,7 @@ exports.submitNumber = function (username, userId, number, comment, countryCode,
             exports.checkIsLegitNumber(`${number}`).then(isLegit => {
                 if (isLegit) return resolve(false);
 
-                let query = `INSERT INTO SavedNumbers (SubmitAuthorName, SubmitAuthorId, Date, Number, Comment, Country, CountryCode, ScamType, FreePhone) VALUES (${index.db.escape(username)}, ${userId}, ${index.db.escape(new Date())}, ${index.db.escape(number)}, ${index.db.escape(comment)}, ${index.db.escape(countryName)}, ${index.db.escape(countryCode)}, ${index.db.escape(type)}, ${index.db.escape(freePhone)});`;
+                let query = `INSERT INTO SavedNumbers (SubmitAuthorName, SubmitAuthorId, Date, Number, Comment, Country, CountryCode, ScamType, FreePhone, FullNumber) VALUES (${index.db.escape(username)}, ${userId}, ${index.db.escape(new Date())}, ${index.db.escape(number)}, ${index.db.escape(comment)}, ${index.db.escape(countryName)}, ${index.db.escape(countryCode)}, ${index.db.escape(type)}, ${index.db.escape(freePhone)}, ${index.db.escape(`${countryCode}${number}`)});`;
                 index.db.query(query, function (err, rows, fields) {
                     if (err) {
                         console.error(`Error submitting number, Error: ${err.stack}`);
@@ -111,7 +111,7 @@ exports.submitUsersToDb = function (userReq) {
 exports.checkIsLegitNumber = function (number) {
     return new Promise((resolve, reject) => {
 
-        let query = `SELECT * FROM NumberBlacklist WHERE Number=${index.db.escape(number)}`;
+        let query = `SELECT * FROM NumberBlacklist WHERE FullNumber=${index.db.escape(number)}`;
         index.db.query(query, function (err, rows, fields) {
             if (err) {
                 console.error(`Unable to check legit number number, Error: ${err.stack}`);
@@ -169,7 +169,8 @@ exports.createNumbersTable = function () {
     NotificationMessages VARCHAR(50),
     Removed TINYINT(1) DEFAULT 0,
     RemovedBy VARCHAR(30),
-    FreePhone TINYINT(1) DEFAULT 0
+    FreePhone TINYINT(1) DEFAULT 0,
+    FullNumber VARCHAR(30)
 );`;
 
         index.db.query(query, function (err, rows, fields) {
@@ -299,7 +300,7 @@ exports.isUserInSSL = function (userId) {
 exports.addNumberToBlacklist = function (submitterUser, number) {
     return new Promise((resolve, reject) => {
 
-        let checkQuery = `SELECT * FROM NumberBlacklist WHERE Number=${index.db.escape(number)}`;
+        let checkQuery = `SELECT * FROM NumberBlacklist WHERE FullNumber=${index.db.escape(number)}`;
         index.db.query(checkQuery, function (err, rows, fields) {
             if (err) reject(err);
             if (rows.length > 0) return resolve(false);

@@ -145,16 +145,18 @@
         <tr onclick="openMoreInfoBox('<%= numberData[x].ID %>')">
             <td></td>
             <% if(isModerator){ %>
-            <td><%= numberData[x].ID %></td>
+            <td style="white-space: nowrap; overflow: hidden;"><%= numberData[x].ID %></td>
             <% } %>
-            <td><b><%= numberData[x].SubmitAuthorName %></b></td>
-            <td><%= numberData[x].Date %></td>
-            <td><%= numberData[x].ScamType %></td>
-            <td><%= numberData[x].FreePhone %></td>
-            <td><b><%= numberData[x].Comment %></b></td>
-            <td><%= numberData[x].Country %></td>
-            <td><b>+<%= numberData[x].CountryCode %> <%= numberData[x].Number %></b></td>
-            <td><%= numberData[x].WorkingCount %> / <%= numberData[x].NotWorkingCount %></td>
+            <td style="white-space: nowrap; overflow: hidden;"><b><%= numberData[x].SubmitAuthorName %></b></td>
+            <td style="white-space: nowrap; overflow: hidden;"><%= numberData[x].Date %></td>
+            <td style="white-space: nowrap; overflow: hidden;"><%= numberData[x].ScamType %></td>
+            <td style="white-space: nowrap; overflow: hidden;"><%= numberData[x].FreePhone %></td>
+            <td style="white-space: nowrap; overflow: hidden;"><b><%= numberData[x].Comment %></b></td>
+            <td style="white-space: nowrap; overflow: hidden;"><%= numberData[x].Country %></td>
+            <td style="white-space: nowrap; overflow: hidden;">
+                <b>+<%= numberData[x].CountryCode %> <%= numberData[x].Number %></b></td>
+            <td style="white-space: nowrap; overflow: hidden;"><%= numberData[x].WorkingCount %>
+                / <%= numberData[x].NotWorkingCount %></td>
         </tr>
 
         <% } } %>
@@ -217,14 +219,6 @@
 <% } } %>
 
 <%- include partials/footer.ejs %>
-
-<style>
-    td {
-        text-align: center;
-        vertical-align: middle;
-        overflow: hidden;
-    }
-</style>
 
 <script src="/js/list.js"></script>
 </body>
