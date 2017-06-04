@@ -36,7 +36,7 @@ module.exports = function (config, app, passport, DiscordS) {
         passport.authenticate('discord', {scope: scopes, callbackURL: `${config.host}/login/callback`})(req, res, next);
     });
 
-    app.get('/login/callback', passport.authenticate('discord', {failureRedirect: '/error'}), (req, res) => {
+    app.get('/login/callback', passport.authenticate('discord', {failureRedirect: '/'}), (req, res) => {
         console.log(`- ${req.user.username} has logged on.`);
         if (req.session.redirect === undefined) {
             res.render('error', {
