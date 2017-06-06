@@ -120,21 +120,21 @@
 <div id="snackbar"></div>
 
 <section class="section">
-    <table class="table is-stripped">
+    <table class="table is-stripped is-bordered">
         <thead>
         <tr>
             <th></th>
             <% if(isModerator){ %>
             <th>ID</th>
             <% } %>
-            <th>Submitter Username</th>
-            <th>Date (D/M/Y H/M/S)</th>
-            <th>Category</th>
-            <th>Free Phone</th>
-            <th>Comment</th>
-            <th>Country</th>
-            <th>Code : Number</th>
-            <th>Working / Not Working</th>
+            <th style="white-space: nowrap; overflow: hidden;">Submitter Username</th>
+            <th style="white-space: nowrap; overflow: hidden;">Date (D/M/Y H/M/S)</th>
+            <th style="white-space: nowrap; overflow: hidden;">Category</th>
+            <th style="white-space: nowrap; overflow: hidden;">Free Phone</th>
+            <th style="white-space: nowrap; overflow: hidden;">Country</th>
+            <th style="white-space: nowrap; overflow: hidden;">Code : Number</th>
+            <th style="white-space: nowrap; overflow: hidden;">Working / Not Working</th>
+            <th style="white-space: nowrap; overflow: hidden;">Comment</th>
         </tr>
         </thead>
 
@@ -145,18 +145,18 @@
         <tr onclick="openMoreInfoBox('<%= numberData[x].ID %>')">
             <td></td>
             <% if(isModerator){ %>
-            <td style="white-space: nowrap; overflow: hidden;"><%= numberData[x].ID %></td>
+            <td style="overflow: hidden;"><%= numberData[x].ID %></td>
             <% } %>
             <td style="white-space: nowrap; overflow: hidden;"><b><%= numberData[x].SubmitAuthorName %></b></td>
             <td style="white-space: nowrap; overflow: hidden;"><%= numberData[x].Date %></td>
             <td style="white-space: nowrap; overflow: hidden;"><%= numberData[x].ScamType %></td>
             <td style="white-space: nowrap; overflow: hidden;"><%= numberData[x].FreePhone %></td>
-            <td style="white-space: nowrap; overflow: hidden;"><b><%= numberData[x].Comment %></b></td>
             <td style="white-space: nowrap; overflow: hidden;"><%= numberData[x].Country %></td>
             <td style="white-space: nowrap; overflow: hidden;">
                 <b>+<%= numberData[x].CountryCode %> <%= numberData[x].Number %></b></td>
             <td style="white-space: nowrap; overflow: hidden;"><%= numberData[x].WorkingCount %>
                 / <%= numberData[x].NotWorkingCount %></td>
+            <td style="overflow: hidden;"><b><%= numberData[x].Comment %></b></td>
         </tr>
 
         <% } } %>
@@ -222,4 +222,11 @@
 
 <script src="/js/list.js"></script>
 </body>
+
+<style>
+    td {
+        align-text: center
+    }
+</style>
+
 </html>
