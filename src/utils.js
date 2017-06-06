@@ -50,7 +50,7 @@ exports.submitNumber = function (username, userId, number, comment, countryCode,
         exports.checkIfExists(number).then(exists => {
             if (exists) return resolve(false);
 
-            exports.checkIsLegitNumber(`${number}`).then(isLegit => {
+            exports.checkIsLegitNumber(`${countryCode}${number}`).then(isLegit => {
                 if (isLegit) return resolve(false);
 
                 let query = `INSERT INTO SavedNumbers (SubmitAuthorName, SubmitAuthorId, Date, Number, Comment, Country, CountryCode, ScamType, FreePhone, FullNumber) VALUES (${index.db.escape(username)}, ${userId}, ${index.db.escape(new Date())}, ${index.db.escape(number)}, ${index.db.escape(comment)}, ${index.db.escape(countryName)}, ${index.db.escape(countryCode)}, ${index.db.escape(type)}, ${index.db.escape(freePhone)}, ${index.db.escape(`${countryCode}${number}`)});`;
@@ -111,7 +111,7 @@ exports.submitUsersToDb = function (userReq) {
 exports.checkIsLegitNumber = function (number) {
     return new Promise((resolve, reject) => {
 
-        let query = `SELECT * FROM NumberBlacklist WHERE FullNumber=${index.db.escape(number)}`;
+        let query = `SELECT * FROM NumberBlacklist WHERE Number=${index.db.escape(number)}`;
         index.db.query(query, function (err, rows, fields) {
             if (err) {
                 console.error(`Unable to check legit number number, Error: ${err.stack}`);
