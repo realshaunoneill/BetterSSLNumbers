@@ -34,10 +34,14 @@ module.exports = function (app, config) {
                         isModerator: isModerator,
                         serverHost: config.host
                     })
-                })
+                }).catch(err => {
+                    console.error(`Unable to render saved numbers, Error: ${err.stack}`);
+                    renderErrorPage(req, res, err)
+                });
             }).catch(err => {console.error(`Unable to render saved numbers, Error: ${err.stack}`); renderErrorPage(req, res, err)});
 
         }catch (err){
+            console.error(`Error while loading list page, Error: ${err.stack}`);
             renderErrorPage(req, res, err);
         }
     });
