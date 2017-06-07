@@ -9,7 +9,7 @@ const RichEmbed = require('discord.js').RichEmbed;
 exports.getSavedNumbers = function () {
     return new Promise((resolve, reject) => {
 
-        let query = `SELECT * FROM SavedNumbers WHERE Removed=0 LIMIT ${index.config.hardLimit}`;
+        let query = `SELECT * FROM SavedNumbers WHERE Removed=0 ORDER BY id DESC LIMIT ${index.config.hardLimit}`;
         index.db.query(query, function (err, rows, fields) {
             if (err) {
                 console.error(`Unable to fetch saved numbers, Error: ${err.stack}`);
