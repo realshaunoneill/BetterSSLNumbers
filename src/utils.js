@@ -621,7 +621,9 @@ exports.isUserBanned = function (userId) {
             }
 
             let isBanned = false;
-            if (rows[0].Banned === 1) isBanned = true;
+            if (rows.length > 0) {
+                if (rows[0].Banned === 1) isBanned = true;
+            }
 
             resolve(isBanned);
         })
