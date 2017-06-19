@@ -612,7 +612,7 @@ exports.hasUserVoted = function (number, userID) {
 exports.isUserBanned = function (userId) {
     return new Promise((resolve, reject) => {
 
-        let query = `SELECT Banned FROM Users WHERE UserId=${index.db.escape(userId)}`;
+        let query = `SELECT * FROM Users WHERE UserId=${index.db.escape(userId)}`;
         index.db.query(query, function (err, rows, fields) {
             if (err) {
                 console.error(`Error while checking if a user is banned, Error: ${err.stack}`);
