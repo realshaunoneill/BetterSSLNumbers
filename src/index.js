@@ -26,12 +26,7 @@ let utils = require('./utils');
 
 try {
 
-    connection = exports.db = mysql.createConnection({
-        host: config.sql_host,
-        user: config.sql_user,
-        password: config.sql_pass,
-        database: config.sql_db
-    });
+    connectDatabase();
 
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({extended: true}));
@@ -86,3 +81,16 @@ try {
 process.on('uncaughtException', (err) => {
     console.error('Uncaught Exception' + err.stack);
 });
+
+function connectDatabase() {
+    connection = exports.db = mysql.createConnection({
+        host: config.sql_host,
+        user: config.sql_user,
+        password: config.sql_pass,
+        database: config.sql_db
+    });
+    connection.on('error', function (err) {
+        if (err.fatal)
+            connectDatabase();
+    });
+}
