@@ -84,7 +84,7 @@ exports.init = function (app) {
                 return res.status(500).send(`Unable to delete the number ${number}!, Error: ${err.stack}`);
             })
         }).catch(err => {
-            return res.status(500).send(`Unable to delete the number ${number}!, Error: ${err.stack}`);
+            return res.status(500).send(`Unable to delete the number!, Error: ${err.stack}`);
         });
     });
 
@@ -124,6 +124,15 @@ exports.init = function (app) {
             })
         }
     });
+
+    app.get('/api/fetch', (req, res) => {
+        utils.getSavedNumbers().then(numbers => {
+            res.status(200).json(numbers);
+        }).catch(err => {
+            res.status(400).send(`Sorry but there appears to be an error with that request! Please report this!`);
+            console.error(`Error fetching numbers via api, Error: ${err.stack}`);
+        })
+    })
 };
 
 function isNumberS(number) {
