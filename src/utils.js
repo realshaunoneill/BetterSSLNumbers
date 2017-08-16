@@ -53,7 +53,17 @@ exports.submitNumber = function (username, userId, number, comment, countryCode,
             exports.checkIsLegitNumber(`${countryCode}${number}`).then(isLegit => {
                 if (isLegit) return resolve(false);
 
-                let query = `INSERT INTO SavedNumbers (SubmitAuthorName, SubmitAuthorId, Date, Number, Comment, Country, CountryCode, ScamType, FreePhone, FullNumber) VALUES (${index.db.escape(username)}, ${userId}, ${index.db.escape(new Date())}, ${index.db.escape(number)}, ${index.db.escape(comment)}, ${index.db.escape(countryName)}, ${index.db.escape(countryCode)}, ${index.db.escape(type)}, ${index.db.escape(freePhone)}, ${index.db.escape(`${countryCode}${number}`)});`;
+                /*let query = `INSERT INTO SavedNumbers (SubmitAuthorName, SubmitAuthorId, Date, Number, Comment, Country, CountryCode, ScamType, FreePhone, FullNumber) VALUES (${index.db.escape(username)}, ${userId}, ${index.db.escape(new Date())}, ${index.db.escape(number)}, ${index.db.escape(comment)}, ${index.db.escape(countryName)}, ${index.db.escape(countryCode)}, ${index.db.escape(type)}, ${index.db.escape(freePhone)}, ${index.db.escape(`${countryCode}${number}`)});`;
+                 index.db.query(query, function (err, rows, fields) {
+                 if (err) {
+                 console.error(`Error submitting number, Error: ${err.stack}`);
+                 console.error(`Error Query: ${query}`);
+                 return reject(err);
+                 }
+
+                 resolve(true);
+                 })*/
+                let query = `INSERT INTO SavedNumbers (SubmitAuthorName, SubmitAuthorId, Date, Number, Comment, Country, CountryCode, ScamType, FullNumber) VALUES (${index.db.escape(username)}, ${userId}, ${index.db.escape(new Date())}, ${index.db.escape(number)}, ${index.db.escape(comment)}, ${index.db.escape(countryName)}, ${index.db.escape(countryCode)}, ${index.db.escape(type)}, ${index.db.escape(`${countryCode}${number}`)});`;
                 index.db.query(query, function (err, rows, fields) {
                     if (err) {
                         console.error(`Error submitting number, Error: ${err.stack}`);
