@@ -36,6 +36,8 @@ exports.init = function (app) {
 
                 utils.isUserBanned(req.user.id).then(isBanned => {
                     if (isBanned) return res.status(401).send(`Sorry but you have been banned from posting numbers! Contact @XeliteXirish if you feel this was a mistake!`);
+                    if (freePhone === true) freePhone = 1;
+                    else if (freePhone === false) freePhone = 0;
 
                     utils.submitNumber(req.user.username, req.user.id, number, comment, countryCode, countryName, type, freePhone).then((added) => {
                         if (added) {
