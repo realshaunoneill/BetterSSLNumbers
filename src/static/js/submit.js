@@ -62,6 +62,9 @@ function submit(scamType, number, country, countryName, comment, freePhone) {
 }
 
 function buildSubmitUrl(scamType, number, country, countryName, comment, freePhone) {
+    let value = 0;
+    if (freePhone == true) value = 1;
+
     let url = '/api/submit?';
 
     url += `type=${scamType}`;
@@ -69,7 +72,7 @@ function buildSubmitUrl(scamType, number, country, countryName, comment, freePho
     url += `&countryCode=${country}`;
     url += `&countryName=${countryName}`;
     url += `&comment=${comment}`;
-    url += `&free=${freePhone}`;
+    url += `&free=${value}`;
 
     return url;
 }
